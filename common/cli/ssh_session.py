@@ -25,25 +25,27 @@ class SSHSession(ExpectSession):
     def __del__(self):
         self.disconnect()
 
-    def connect(self, host, username, password, port=None, re_string=''):
+    def connect(self, host, username, password, port=None, re_string='', look_for_keys=False):
         """
             Connect to device through ssh
             :param re_string: regular expration of end of output
             :return: str
         """
-        ExpectSession.init(host, username, password, port)
+        ExpectSession.init(self, host, username, password, port)
 
-        self._logger.info("Host: {0}, port: {1}, username: {2}, password: {3}, timeout: {4}".
+        if self._logger:
+            self._logger.info("Host: {0}, port: {1}, username: {2}, password: {3}, timeout: {4}".
                           format(self._host, self._port, self._username, self._password, self._timeout))
 
         self._handler.connect(self._host, self._port, self._username, self._password, timeout=self._timeout,
-                              banner_timeout=30, allow_agent=False, look_for_keys=False)
+                              banner_timeout=30, allow_agent=False, look_for_keys=look_for_keys)
 
         self._current_channel = self._handler.invoke_shell()
         self._current_channel.settimeout(self._timeout)
 
         output = self.hardware_expect(re_string=re_string, timeout=self._timeout)
-        self._logger.info(output)
+        if self._logger:
+            self._logger.info(output)
 
         return output
 
