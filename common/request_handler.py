@@ -272,5 +272,36 @@ class RequestHandler:
        :return:
        """
         command_logger.info(XMLWrapper.get_string_from_xml(command_node))
-        response = self._driver_handler.set_speed_manual(command_logger)
-        return response
+        parameters_node = XMLWrapper.get_child_node(command_node, 'Parameters', xs_prefix)
+
+        src_port  = XMLWrapper.get_node_text(XMLWrapper.get_child_node(parameters_node, 'SrcPort', xs_prefix))
+        dst_port = XMLWrapper.get_node_text(XMLWrapper.get_child_node(parameters_node, 'DstPort', xs_prefix))
+        speed = XMLWrapper.get_node_text(XMLWrapper.get_child_node(parameters_node, 'Speed', xs_prefix))
+        duplex = XMLWrapper.get_node_text(XMLWrapper.get_child_node(parameters_node, 'Duplex', xs_prefix))
+
+        # return self._driver_handler.set_speed_manual(src_port.split('/'), dst_port.split('/'), speed, duplex, command_logger)
+        return self._driver_handler.set_speed_manual(command_logger)
+
+    def get_attribute_value(self, command_node, xs_prefix='', command_logger=None):
+        """
+        <Commands xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DriverCommands.xsd">
+            <Command CommandName="GetAttributeValue" CommandId="c2a37eca-472f-4492-810e-cdc237a7c33a">
+                <Parameters xsi:type="??????">
+                    <Address>192.168.28.223/91</Address>
+                    <Attribute>Serial Number</Attribute>
+                </Parameters>
+            </Command>
+        </Commands>
+        :param command_node:
+        :param xs_prefix:
+        :return:
+        """
+        command_logger.info(XMLWrapper.get_string_from_xml(command_node))
+        parameters_node = XMLWrapper.get_child_node(command_node, 'Parameters', xs_prefix)
+
+        address  = XMLWrapper.get_node_text(XMLWrapper.get_child_node(parameters_node, 'Address', xs_prefix))
+        attr_name = XMLWrapper.get_node_text(XMLWrapper.get_child_node(parameters_node, 'Attribute', xs_prefix))
+
+        # return self._driver_handler.get_attribute_value(address, attr_name, command_logger)
+        return XMLWrapper.parse_xml('<Attribute Name="' + attr_name + '" Type="String" Value="fake_value"/>')
+

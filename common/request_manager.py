@@ -150,6 +150,13 @@ class RequestManager:
                                     XMLWrapper.set_node_attr(responses_info_node, 'type',
                                                              '{' + attr_prefix + '}', attr_value ='StateInfo')
 
+                                # exception for method GetAttributeValue
+                                if command_name_lower == 'getattributevalue':
+                                    attr_prefix = 'http://www.w3.org/2001/XMLSchema-instance'
+                                    #XMLWrapper.set_node_attr(responses_info_node, 'xmlns:xsi', attr_value=attr_prefix)
+                                    XMLWrapper.set_node_attr(responses_info_node, 'type',
+                                                             '{' + attr_prefix + '}', attr_value ='AttributeInfoResponse')
+
                             XMLWrapper.append_child(responses_node, command_response_node)
                         else:
                             responses_node = self._set_response_error(responses_node, '404',

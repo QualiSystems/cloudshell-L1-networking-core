@@ -34,3 +34,11 @@ class DriverHandlerBase:
     @abstractmethod
     def map_clear(self, src_port, dst_port):
         pass
+
+    # @abstractmethod
+    # def set_speed_manual(self, src_port, dst_port, speed, duplex):
+    #     pass
+    #
+    # @abstractmethod
+    # def get_attribute_value(self, address, attribute_name):
+    #     pass
