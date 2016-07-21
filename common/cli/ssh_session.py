@@ -9,15 +9,21 @@ class SSHSession(ExpectSession):
     _DEFAULT_BUFFER = 512
 
     def _init_handler(self):
-        return paramiko.SSHClient()
-
-    def __init__(self, *args, **kwargs):
-        ExpectSession.__init__(self, self._init_handler(), *args, **kwargs)
-        self._handler.load_system_host_keys()
-        self._handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        rv = paramiko.SSHClient()
+        rv.load_system_host_keys()
+        rv.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         self._current_channel = None
 
+        return rv
+
+    def __init__(self, *args, **kwargs):
+        ExpectSession.__init__(self, self._init_handler(), *args, **kwargs)
+        # self._handler.load_system_host_keys()
+        # self._handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        #
+        # self._current_channel = None
+        #
         self._buffer_size = SSHSession._DEFAULT_BUFFER
         if 'buffer_size' in kwargs:
             self._buffer_size = kwargs['buffer_size']
@@ -33,9 +39,11 @@ class SSHSession(ExpectSession):
         """
         ExpectSession.init(self, host, username, password, port)
 
+        s = "Host: {0}, port: {1}, username: {2}, password: {3}, timeout: {4}".format(self._host, self._port, self._username, self._password, self._timeout)
         if self._logger:
-            self._logger.info("Host: {0}, port: {1}, username: {2}, password: {3}, timeout: {4}".
-                          format(self._host, self._port, self._username, self._password, self._timeout))
+            self._logger.info(s)
+        # with open(r'c:\temp\ssh_connect.txt', 'a') as f:
+        #     f.write(s + '\n')
 
         self._handler.connect(self._host, self._port, self._username, self._password, timeout=self._timeout,
                               banner_timeout=30, allow_agent=False, look_for_keys=look_for_keys)
@@ -49,18 +57,19 @@ class SSHSession(ExpectSession):
 
         return output
 
-    def reconnect(self, re_string=''):
+    def reconnect(self, re_string='', look_for_keys=False):
         self.disconnect()
 
         self._handler = self._init_handler()
-        return self.connect(self._host, self._username, self._password, self._port, re_string)
+        return self.connect(self._host, self._username, self._password, self._port, re_string, look_for_keys=look_for_keys)
 
     def disconnect(self):
         """
             Disconnect from device
             :return:
         """
-        self._logger.info('Disconnected from device!')
+        if self._logger:
+            self._logger.info('Disconnected from device!')
         self._current_channel = None
         self._handler.close()
 
