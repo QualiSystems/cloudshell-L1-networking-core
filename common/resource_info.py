@@ -87,7 +87,7 @@ class ResourceInfo:
                                  attr_value=self._serial_number)
 
         if self._depth != 0:
-            relative_address += "/" + self._index
+            relative_address += "/" + str(self._index)
         else:
             relative_address = self._address
 

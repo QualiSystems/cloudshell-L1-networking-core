@@ -1,5 +1,3 @@
-__author__ = 'g8y3e'
-
 import re
 import socket
 import time
@@ -65,23 +63,23 @@ class ExpectSession(Session):
         self._send(data_str + self._new_line)
 
     def send_command(self, data_str=None, re_string='', expect_map=OrderedDict(),
-                     error_map=OrderedDict(), timeout=None, retries_count=3):
+                     error_map=OrderedDict(), timeout=None, retries_count=3, logger=None):
         reconnect_count = 0
         while reconnect_count < self._reconnect_count:
             try:
                 output_str = self.hardware_expect(data_str, re_string, expect_map, error_map, timeout,
-                                                  retries_count)
+                                                  retries_count, logger)
 
                 return output_str
             except Exception as error_object:
-                    self.reconnect(re_string)
+                self.reconnect(re_string)
 
             reconnect_count += 1
 
         raise Exception('ExpectSession', 'Can\'t connect to device!')
 
     def hardware_expect(self, data_str=None, re_string='', expect_map=OrderedDict(),
-                        error_map=OrderedDict(), timeout=None, retries_count=3):
+                        error_map=OrderedDict(), timeout=None, retries_count=3, logger=None):
         """
 
         :param data_str:
@@ -92,6 +90,9 @@ class ExpectSession(Session):
         :param retries_count:
         :return:
         """
+
+        if not logger:
+            logger = self._logger
 
         if data_str is not None:
             self.send_line(data_str)
@@ -124,7 +125,8 @@ class ExpectSession(Session):
 
             if current_output is None:
                 output_str = ''.join(output_list) + output_str
-                self._logger.error("Can't find prompt in output: \n" + output_str)
+                if logger:
+                    logger.error("Can't find prompt in output: \n" + output_str)
                 raise Exception('ExpectSession', 'Empty response from device!')
             output_str += current_output
 

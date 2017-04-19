@@ -46,7 +46,7 @@ class RequestHandler:
             </Command>
         </Commands>
 
-        :param xml_node:
+        :param command_node:
         :return:
         """
         command_logger.info("Begin")
@@ -63,7 +63,7 @@ class RequestHandler:
 
         response_node = None
         if self._device_address != address_str or self._device_user != user_str or \
-            self._device_password != password_str:
+                        self._device_password != password_str:
             response_node = self._driver_handler.login(address_str, user_str, password_str, command_logger)
 
         self._device_address = address_str
@@ -251,6 +251,35 @@ class RequestHandler:
         dst_port_str = XMLWrapper.get_node_text(dst_port_node)
 
         response = self._driver_handler.map_uni(src_port_str.split('/'), dst_port_str.split('/'), command_logger)
+        command_logger.info(XMLWrapper.get_string_from_xml(response))
+        return response
+
+    def map_tap(self, command_node, xs_prefix='', command_logger=None):
+        """
+        <Commands xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DriverCommands.xsd">
+            <Command CommandName="MapTap" CommandId="09cc9080-386b-4143-aaa0-a7211370304b">
+                <Parameters xsi:type="MapTapCommandParameters">
+                    <SrcPort>192.168.28.223/2</SrcPort>
+                    <DstPort>192.168.28.223/49</DstPort>
+                </Parameters>
+            </Command>
+        </Commands>
+
+        :param command_node:
+        :param xs_prefix:
+        :return:
+        """
+        command_logger.info(XMLWrapper.get_string_from_xml(command_node))
+
+        parameters_node = XMLWrapper.get_child_node(command_node, 'Parameters', xs_prefix)
+
+        src_port_node = XMLWrapper.get_child_node(parameters_node, 'SrcPort', xs_prefix)
+        dst_port_node = XMLWrapper.get_child_node(parameters_node, 'DstPort', xs_prefix)
+
+        src_port_str = XMLWrapper.get_node_text(src_port_node)
+        dst_port_str = XMLWrapper.get_node_text(dst_port_node)
+
+        response = self._driver_handler.map_tap(src_port_str.split('/'), dst_port_str.split('/'), command_logger)
         command_logger.info(XMLWrapper.get_string_from_xml(response))
         return response
 
