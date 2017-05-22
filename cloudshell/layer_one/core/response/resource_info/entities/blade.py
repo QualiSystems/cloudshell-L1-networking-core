@@ -2,9 +2,12 @@ from cloudshell.layer_one.core.response.resource_info.entities.base import Resou
 
 
 class Blade(ResourceInfo):
+    NAME_TEMPLATE = 'Blade{}'
+    FAMILY_NAME = 'L1 Switch Blade'
+
     def __init__(self, resource_id, model_name, serial_number):
-        name = 'Blade{}'.format(resource_id)
-        family_name = 'L1 Switch Blade'
+        name = self.NAME_TEMPLATE.format(resource_id)
+        family_name = self.FAMILY_NAME
         super(Blade, self).__init__(resource_id, name, family_name, model_name, serial_number)
 
     def attr_toggle_rate(self, value):

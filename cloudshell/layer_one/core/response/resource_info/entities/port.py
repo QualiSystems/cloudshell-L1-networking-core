@@ -2,9 +2,12 @@ from cloudshell.layer_one.core.response.resource_info.entities.base import Resou
 
 
 class Port(ResourceInfo):
+    NAME_TEMPLATE = 'Port{}'
+    FAMILY_NAME = 'L1 Switch Port'
+
     def __init__(self, resource_id, model_name, serial_number):
-        name = 'Port{}'.format(resource_id)
-        family_name = 'L1 Switch Port'
+        name = self.NAME_TEMPLATE.format(resource_id)
+        family_name = self.FAMILY_NAME
         super(Port, self).__init__(resource_id, name, family_name, model_name, serial_number)
 
     def attr_protocol_type(self, value):

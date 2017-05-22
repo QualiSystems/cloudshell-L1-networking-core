@@ -2,10 +2,13 @@ from cloudshell.layer_one.core.response.resource_info.entities.base import Resou
 
 
 class Chassis(ResourceInfo):
+    NAME_TEMPLATE = 'Chassis{}'
+    FAMILY_NAME = 'L1 Switch'
+
     def __init__(self, resource_id, address, model_name, serial_number):
         self._address = address
-        name = 'Chassis{}'.format(resource_id)
-        family_name = 'L1 Switch'
+        name = self.NAME_TEMPLATE.format(resource_id)
+        family_name = self.FAMILY_NAME
         super(Chassis, self).__init__(resource_id, name, family_name, model_name, serial_number)
 
     @property

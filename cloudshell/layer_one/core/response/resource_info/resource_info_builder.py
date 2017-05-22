@@ -1,5 +1,5 @@
 import os
-from cloudshell.layer_one.core.helper.xml_template_helper import XMLTemplateHelper
+from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
 
 
 def full_path(relative_path):
@@ -15,9 +15,9 @@ class ResourceInfoBuilder(object):
     MAPPING_TEMPLATE = full_path('templates/resource_incoming_map_template.xml')
 
     def __init__(self):
-        self._mapping_template = XMLTemplateHelper.read_template(self.MAPPING_TEMPLATE)
-        self._attribute_template = XMLTemplateHelper.read_template(self.ATTRIBUTE_TEMPLATE)
-        self._resource_template = XMLTemplateHelper.read_template(self.RESOURCE_TEMPLATE)
+        self._mapping_template = XMLHelper.read_template(self.MAPPING_TEMPLATE)
+        self._attribute_template = XMLHelper.read_template(self.ATTRIBUTE_TEMPLATE)
+        self._resource_template = XMLHelper.read_template(self.RESOURCE_TEMPLATE)
 
     def _build_resource_node(self, resource_info):
         """
@@ -27,7 +27,7 @@ class ResourceInfoBuilder(object):
         :return: Resource node
         :rtype: xml.etree.ElementTree.Element
         """
-        node = XMLTemplateHelper.build_node_for_template(self._resource_template)
+        node = XMLHelper.build_node_from_string(self._resource_template)
         node.set("Name", resource_info.name)
         node.set("ResourceFamilyName", resource_info.family_name)
         node.set("ResourceModelName", resource_info.model_name)
@@ -49,7 +49,7 @@ class ResourceInfoBuilder(object):
         :return: Attribute node
         :rtype: xml.etree.ElementTree.Element
         """
-        node = XMLTemplateHelper.build_node_for_template(self._attribute_template)
+        node = XMLHelper.build_node_from_string(self._attribute_template)
         node.set("Name", attribute.name)
         node.set("Type", attribute.type)
         node.set("Value", attribute.value)
@@ -63,7 +63,7 @@ class ResourceInfoBuilder(object):
         :return: Mapping node
         :rtype: xml.etree.ElementTree.Element
         """
-        node = XMLTemplateHelper.build_node_for_template(self._mapping_template)
+        node = XMLHelper.build_node_from_string(self._mapping_template)
         child_incoming_node = node.find("IncomingMapping")
         child_incoming_node.text = resource.address
         return node
