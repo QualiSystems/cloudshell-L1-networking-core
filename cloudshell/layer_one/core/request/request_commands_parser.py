@@ -3,10 +3,8 @@ from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
 
 
 class RequestCommandsParser(object):
-    def __init__(self):
-        pass
-
-    def _build_command_instance(self, command_node):
+    @staticmethod
+    def _build_command_instance(command_node):
         """
         Build command instance for command node
         :param command_node: 
@@ -26,7 +24,8 @@ class RequestCommandsParser(object):
 
         return Command(command_name, command_id, command_params)
 
-    def parse_request_commands(self, xml_request):
+    @staticmethod
+    def parse_request_commands(xml_request):
         """
         Parse xml request and create command instances
         :param xml_request: 
@@ -36,5 +35,5 @@ class RequestCommandsParser(object):
         commands = []
         request_node = XMLHelper.build_node_from_string(xml_request)
         for command_node in request_node:
-            commands.append(self._build_command_instance(command_node))
+            commands.append(RequestCommandsParser._build_command_instance(command_node))
         return commands

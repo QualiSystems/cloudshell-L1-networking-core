@@ -10,24 +10,20 @@ class ResourceInfoBuilder(object):
     """
     Build resource info node
     """
-    RESOURCE_TEMPLATE = full_path('templates/resource_template.xml')
-    ATTRIBUTE_TEMPLATE = full_path('templates/resource_attribute_template.xml')
-    MAPPING_TEMPLATE = full_path('templates/resource_incoming_map_template.xml')
+    RESOURCE_TEMPLATE = XMLHelper.read_template(full_path('templates/resource_template.xml'))
+    ATTRIBUTE_TEMPLATE = XMLHelper.read_template(full_path('templates/resource_attribute_template.xml'))
+    MAPPING_TEMPLATE = XMLHelper.read_template(full_path('templates/resource_incoming_map_template.xml'))
 
-    def __init__(self):
-        self._mapping_template = XMLHelper.read_template(self.MAPPING_TEMPLATE)
-        self._attribute_template = XMLHelper.read_template(self.ATTRIBUTE_TEMPLATE)
-        self._resource_template = XMLHelper.read_template(self.RESOURCE_TEMPLATE)
-
-    def _build_resource_node(self, resource_info):
+    @staticmethod
+    def _build_resource_node(resource_info):
         """
-        Builde resource xml node
+        Build resource xml node
         :param resource_info:
         :type resource_info: cloudshell.layer_one.core.response.entities.base.ResourceInfo
         :return: Resource node
         :rtype: xml.etree.ElementTree.Element
         """
-        node = XMLHelper.build_node_from_string(self._resource_template)
+        node = XMLHelper.build_node_from_string(ResourceInfoBuilder.RESOURCE_TEMPLATE)
         node.set("Name", resource_info.name)
         node.set("ResourceFamilyName", resource_info.family_name)
         node.set("ResourceModelName", resource_info.model_name)
@@ -35,13 +31,14 @@ class ResourceInfoBuilder(object):
         node.set("Address", resource_info.address)
         attributes_node = node.find("ResourceAttributes")
         for attribute in resource_info.attributes:
-            attribute_node = self._build_attribute_node(attribute)
+            attribute_node = ResourceInfoBuilder._build_attribute_node(attribute)
             attributes_node.append(attribute_node)
         if resource_info.mapping:
-            node.append(self._build_mapping_node(resource_info.mapping))
+            node.append(ResourceInfoBuilder._build_mapping_node(resource_info.mapping))
         return node
 
-    def _build_attribute_node(self, attribute):
+    @staticmethod
+    def _build_attribute_node(attribute):
         """
         Build attribute node
         :param attribute: 
@@ -49,13 +46,14 @@ class ResourceInfoBuilder(object):
         :return: Attribute node
         :rtype: xml.etree.ElementTree.Element
         """
-        node = XMLHelper.build_node_from_string(self._attribute_template)
+        node = XMLHelper.build_node_from_string(ResourceInfoBuilder.ATTRIBUTE_TEMPLATE)
         node.set("Name", attribute.name)
         node.set("Type", attribute.type)
         node.set("Value", attribute.value)
         return node
 
-    def _build_mapping_node(self, resource):
+    @staticmethod
+    def _build_mapping_node(resource):
         """
         Build mapping node
         :param resource: 
@@ -63,12 +61,13 @@ class ResourceInfoBuilder(object):
         :return: Mapping node
         :rtype: xml.etree.ElementTree.Element
         """
-        node = XMLHelper.build_node_from_string(self._mapping_template)
+        node = XMLHelper.build_node_from_string(ResourceInfoBuilder.MAPPING_TEMPLATE)
         child_incoming_node = node.find("IncomingMapping")
         child_incoming_node.text = resource.address
         return node
 
-    def _build_resource_child_nodes(self, node, resource):
+    @staticmethod
+    def _build_resource_child_nodes(node, resource):
         """
         Build resource nodes for children recursively
         :param resource:
@@ -79,11 +78,12 @@ class ResourceInfoBuilder(object):
         if len(resource.child_resources) > 0:
             child_resources_node = node.find('ChildResources')
             for child_resource in resource.child_resources.values():
-                child_node = self._build_resource_node(child_resource)
+                child_node = ResourceInfoBuilder._build_resource_node(child_resource)
                 child_resources_node.append(child_node)
-                self._build_resource_child_nodes(child_node, child_resource)
+                ResourceInfoBuilder._build_resource_child_nodes(child_node, child_resource)
 
-    def build_resource_info_node(self, base_resource):
+    @staticmethod
+    def build_resource_info_node(base_resource):
         """
         Build tree of xml nodes for resource tree
         :param base_resource:
@@ -91,6 +91,6 @@ class ResourceInfoBuilder(object):
         :return:
         :type: xml.etree.ElementTree.Element
         """
-        base_resource_node = self._build_resource_node(base_resource)
-        self._build_resource_child_nodes(base_resource_node, base_resource)
+        base_resource_node = ResourceInfoBuilder._build_resource_node(base_resource)
+        ResourceInfoBuilder._build_resource_child_nodes(base_resource_node, base_resource)
         return base_resource_node

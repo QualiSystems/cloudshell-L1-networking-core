@@ -7,15 +7,12 @@ def full_path(relative_path):
     return os.path.join(os.path.dirname(__file__), relative_path)
 
 
-class ResponsesBuilder(object):
-    RESPONSES_TEMPLATE = full_path('templates/responses_template.xml')
-    COMMAND_RESPONSE_TEMPLATE = full_path('templates/command_response_template.xml')
+class CommandResponsesBuilder(object):
+    RESPONSES_TEMPLATE = XMLHelper.read_template(full_path('templates/responses_template.xml'))
+    COMMAND_RESPONSE_TEMPLATE = XMLHelper.read_template(full_path('templates/command_response_template.xml'))
 
-    def __init__(self):
-        self._responses_template = XMLHelper.read_template(self.RESPONSES_TEMPLATE)
-        self._command_response_template = XMLHelper.read_template(self.COMMAND_RESPONSE_TEMPLATE)
-
-    def _build_command_response_node(self, command):
+    @staticmethod
+    def _build_command_response_node(command):
         """
         Build command response node
         :param command: 
@@ -23,7 +20,7 @@ class ResponsesBuilder(object):
         :return: 
         :rtype: xml.etree.ElementTree.Element
         """
-        command_response_node = XMLHelper.build_node_from_string(self._command_response_template)
+        command_response_node = XMLHelper.build_node_from_string(CommandResponsesBuilder.COMMAND_RESPONSE_TEMPLATE)
         command_response_node.set('CommandName', command.command_name)
         command_response_node.set('CommandId', command.command_id)
         command_response_node.set('Success', str(command.success).lower())
@@ -41,7 +38,8 @@ class ResponsesBuilder(object):
             command_response_node.find('ResponseInfo').append(command.response_info)
         return command_response_node
 
-    def build_responses(self, command_list):
+    @staticmethod
+    def build_responses(command_list):
         """
         Builde responses for command list
         :param command_list: 
@@ -49,7 +47,7 @@ class ResponsesBuilder(object):
         :return:
         :rtype: xml.etree.ElementTree.Element
         """
-        responses_node = XMLHelper.build_node_from_string(self._responses_template)
+        responses_node = XMLHelper.build_node_from_string(ResponsesBuilder.RESPONSES_TEMPLATE)
         for command in command_list:
-            responses_node.append(self._build_command_response_node(command))
+            responses_node.append(ResponsesBuilder._build_command_response_node(command))
         return responses_node
