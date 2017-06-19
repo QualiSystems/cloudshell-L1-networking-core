@@ -27,9 +27,12 @@ class ConfigurationParser:
 
         if ConfigurationParser._RUNTIME_CONFIG_JSON is None:
             configure_path = ConfigurationParser._ROOT_FOLDER + \
-                             ConfigurationParser._CONFIG_JSON["common_variable"]["runtime_configuration"]
-            json_data = open(configure_path).read()
-            ConfigurationParser._RUNTIME_CONFIG_JSON = json.loads(json_data)
+                             ConfigurationParser._CONFIG_JSON.get("common_variable", {}).get("runtime_configuration", "")
+            if os.path.exists(configure_path):
+                json_data = open(configure_path).read()
+                ConfigurationParser._RUNTIME_CONFIG_JSON = json.loads(json_data)
+            else:
+                raise Exception("Runtime configuration file '{}' is missing".format(configure_path))
 
     @staticmethod
     def get(*args):

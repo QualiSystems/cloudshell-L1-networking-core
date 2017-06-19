@@ -51,6 +51,7 @@ class TCPSession(ExpectSession):
 
             :return:
         """
+
         self._handler.close()
 
     def _send(self, data_str):

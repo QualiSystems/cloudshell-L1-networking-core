@@ -1,5 +1,3 @@
-__author__ = 'g8y3e'
-
 import re
 import socket
 import time
