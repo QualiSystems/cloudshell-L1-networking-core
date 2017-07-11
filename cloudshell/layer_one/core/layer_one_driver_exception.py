@@ -1,0 +1,2 @@
+class LayerOneDriverException(Exception):
+    pass

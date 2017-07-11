@@ -1,2 +1,0 @@
-class LayerOneException(Exception):
-    pass

@@ -3,6 +3,9 @@ from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
 
 
 class RequestCommandsParser(object):
+    def __init__(self, logger):
+        self.logger = logger
+
     @staticmethod
     def _build_command_instance(command_node):
         """

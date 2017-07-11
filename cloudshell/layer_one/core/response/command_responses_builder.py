@@ -47,7 +47,7 @@ class CommandResponsesBuilder(object):
         :return:
         :rtype: xml.etree.ElementTree.Element
         """
-        responses_node = XMLHelper.build_node_from_string(ResponsesBuilder.RESPONSES_TEMPLATE)
+        responses_node = XMLHelper.build_node_from_string(CommandResponsesBuilder.RESPONSES_TEMPLATE)
         for command in command_list:
-            responses_node.append(ResponsesBuilder._build_command_response_node(command))
+            responses_node.append(CommandResponsesBuilder._build_command_response_node(command))
         return responses_node
