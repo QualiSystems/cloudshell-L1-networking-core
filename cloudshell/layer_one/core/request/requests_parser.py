@@ -1,8 +1,8 @@
-from cloudshell.layer_one.core.entities.command import Command
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
+from cloudshell.layer_one.core.request.command_request import CommandRequest
 
 
-class RequestCommandsParser(object):
+class RequestsParser(object):
     def __init__(self, logger):
         self.logger = logger
 
@@ -25,7 +25,7 @@ class RequestCommandsParser(object):
             for param_node in parameters_node:
                 command_params[param_node.tag.replace(namespace, '')] = param_node.text
 
-        return Command(command_name, command_id, command_params)
+        return CommandRequest(command_name, command_id, command_params)
 
     @staticmethod
     def parse_request_commands(xml_request):
@@ -38,5 +38,5 @@ class RequestCommandsParser(object):
         commands = []
         request_node = XMLHelper.build_node_from_string(xml_request)
         for command_node in request_node:
-            commands.append(RequestCommandsParser._build_command_instance(command_node))
+            commands.append(RequestsParser._build_command_instance(command_node))
         return commands

@@ -1,4 +1,5 @@
 import os
+from xml.etree import ElementTree
 
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
 
@@ -12,42 +13,54 @@ class CommandResponsesBuilder(object):
     COMMAND_RESPONSE_TEMPLATE = XMLHelper.read_template(full_path('templates/command_response_template.xml'))
 
     @staticmethod
-    def _build_command_response_node(command):
+    def _build_command_response_node(command_response):
         """
         Build command response node
-        :param command: 
-        :type command: cloudshell.layer_one.core.entities.command.Command
+        :param command_response: 
+        :type command_response: cloudshell.layer_one.core.response.command_response.CommandResponse
         :return: 
-        :rtype: xml.etree.ElementTree.Element
+        :rtype: ElementTree.Element
         """
         command_response_node = XMLHelper.build_node_from_string(CommandResponsesBuilder.COMMAND_RESPONSE_TEMPLATE)
-        command_response_node.set('CommandName', command.command_name)
-        command_response_node.set('CommandId', command.command_id)
-        command_response_node.set('Success', str(command.success).lower())
+        command_response_node.set('CommandName', command_response.command_request.command_name)
+        command_response_node.set('CommandId', command_response.command_request.command_id)
+        command_response_node.set('Success', str(command_response.success).lower())
 
         timestamp_node = command_response_node.find('Timestamp')
-        timestamp_node.text = command.timestamp
+        timestamp_node.text = command_response.timestamp
 
-        if command.error is not None:
-            command_response_node.find('Error').text = command.error
+        if command_response.error is not None:
+            command_response_node.find('Error').text = command_response.error
 
-        if command.log is not None:
-            command_response_node.find('Log').text = command.log
+        if command_response.log is not None:
+            command_response_node.find('Log').text = command_response.log
 
-        if command.response_info is not None:
-            command_response_node.find('ResponseInfo').append(command.response_info)
+        if command_response.response_info is not None:
+            command_response_node.append(command_response.response_info.build_xml_node())
+        else:
+            command_response_node.append(ElementTree.Element('ResponseInfo'))
         return command_response_node
 
     @staticmethod
-    def build_responses(command_list):
+    def build_xml(responses):
         """
-        Builde responses for command list
-        :param command_list: 
-        :type command_list: list
+        Builde responses for list of responces objects
+        :param responses: 
+        :type responses: list
         :return:
         :rtype: xml.etree.ElementTree.Element
         """
         responses_node = XMLHelper.build_node_from_string(CommandResponsesBuilder.RESPONSES_TEMPLATE)
-        for command in command_list:
-            responses_node.append(CommandResponsesBuilder._build_command_response_node(command))
+        for command_response in responses:
+            responses_node.append(CommandResponsesBuilder._build_command_response_node(command_response))
         return responses_node
+
+    @staticmethod
+    def to_string(responses):
+        """
+        Generate responses string
+        :param responses: 
+        :return: 
+        :type str
+        """
+        return ElementTree.tostring(CommandResponsesBuilder.build_xml(responses))
