@@ -3,6 +3,8 @@ from xml.etree import ElementTree
 
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
 
+ElementTree.register_namespace("", "http://schemas.qualisystems.com/ResourceManagement/DriverCommandResult.xsd")
+
 
 def full_path(relative_path):
     return os.path.join(os.path.dirname(__file__), relative_path)
@@ -11,6 +13,7 @@ def full_path(relative_path):
 class CommandResponsesBuilder(object):
     RESPONSES_TEMPLATE = XMLHelper.read_template(full_path('templates/responses_template.xml'))
     COMMAND_RESPONSE_TEMPLATE = XMLHelper.read_template(full_path('templates/command_response_template.xml'))
+    ERROR_RESPONSE = XMLHelper.read_template(full_path('templates/error_response.xml'))
 
     @staticmethod
     def _build_command_response_node(command_response):
@@ -42,7 +45,7 @@ class CommandResponsesBuilder(object):
         return command_response_node
 
     @staticmethod
-    def build_xml(responses):
+    def build_xml_result(responses):
         """
         Builde responses for list of responces objects
         :param responses: 
@@ -56,11 +59,19 @@ class CommandResponsesBuilder(object):
         return responses_node
 
     @staticmethod
-    def to_string(responses):
+    def to_string(xml_node):
         """
-        Generate responses string
-        :param responses: 
+        Generate string for xml node
+        :param xml_node: 
         :return: 
         :type str
         """
-        return ElementTree.tostring(CommandResponsesBuilder.build_xml(responses))
+        return ElementTree.tostring(xml_node)
+
+    @staticmethod
+    def build_xml_error(error_code, log_message):
+        command_response_node = XMLHelper.build_node_from_string(CommandResponsesBuilder.ERROR_RESPONSE)
+        namespace = XMLHelper.get_node_namespace(command_response_node)
+        command_response_node.find(namespace + 'ErrorCode').text = str(error_code)
+        command_response_node.find(namespace + 'Log').text = str(log_message)
+        return command_response_node

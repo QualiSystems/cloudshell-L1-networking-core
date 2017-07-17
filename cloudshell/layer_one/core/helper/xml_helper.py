@@ -34,7 +34,7 @@ class XMLHelper(object):
         :param node: xml node
         :type node: xml.etree.ElementTree.Element
         :return: 
-        :rtype: basestring
+        :rtype: str
         """
         m = re.match('\{.*\}', node.tag)
         return m.group(0) if m else ''

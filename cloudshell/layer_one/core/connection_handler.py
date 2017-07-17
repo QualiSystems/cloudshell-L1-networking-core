@@ -36,13 +36,16 @@ class ConnectionHandler(Thread):
     def run(self):
         while True:
             try:
-                commands = self._read_request_commands()
-                responses = self._execute_commands(commands)
-                self._send_responses(responses)
+                command_requests = self._read_request_commands()
+                responses = self._command_executor.execute_commands(command_requests)
+                self._send_response(
+                    CommandResponsesBuilder.to_string(CommandResponsesBuilder.build_xml_result(responses)))
             except ConnectionClosedException:
                 self._logger.debug('Connection closed')
                 break
-            except:
+            except Exception as ex:
+                self._send_response(
+                    CommandResponsesBuilder.to_string(CommandResponsesBuilder.build_xml_error(0, ex.message)))
                 tb = traceback.format_exc()
                 self._logger.critical(tb)
                 self._connection_socket.close()
@@ -64,16 +67,17 @@ class ConnectionHandler(Thread):
         return data
 
     def _read_request_commands(self):
-        xml_request = self._read_socket()
-        self._xml_logger.info(xml_request.replace('\r', '') + "\n\n")
-        requests = RequestsParser.parse_request_commands(xml_request)
+        request_string = self._read_socket()
+        self._xml_logger.info(request_string.replace('\r', '') + "\n\n")
+        requests = RequestsParser.parse_request_commands(request_string)
         self._logger.debug(requests)
         return requests
 
-    def _execute_commands(self, command_requests):
-        return self._command_executor.execute_commands(command_requests)
-
-    def _send_responses(self, responses):
-        responses_string = CommandResponsesBuilder.to_string(responses)
-        self._connection_socket.send(responses_string + self.END_COMMAND)
-        self._xml_logger.info(responses_string)
+    def _send_response(self, response_string):
+        """
+        Send response
+        :param response_string: 
+        :return: 
+        """
+        self._connection_socket.send(response_string + self.END_COMMAND)
+        self._xml_logger.info(response_string)
