@@ -19,7 +19,7 @@ class DriverListener(object):
         self._xml_logger = xml_logger
         self._is_running = False
 
-    def _initialize_socket(self, host=SERVER_HOST, port=SERVER_PORT):
+    def _initialize_socket(self, host, port):
         """
         Initialize socket, and start listening
         :return: 
@@ -41,8 +41,10 @@ class DriverListener(object):
     def set_running(self, is_running):
         self._is_running = is_running
 
-    def start_listening(self, host=SERVER_HOST, port=SERVER_PORT):
+    def start_listening(self, host=None, port=None):
         """Initialize socket and start listening"""
+        host = host if host else self.SERVER_HOST
+        port = port if port else self.SERVER_PORT
         server_socket = self._initialize_socket(host, port)
         while self._is_running:
             connection, connection_data = server_socket.accept()

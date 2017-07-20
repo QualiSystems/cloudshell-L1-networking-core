@@ -9,8 +9,9 @@ class CommandResponseManager(object):
     Generate and manage command response 
     """
 
-    def __init__(self, command_request):
+    def __init__(self, command_request, logger):
         self._command_response = CommandResponse(command_request)
+        self._logger = logger
 
     def __enter__(self):
         return self._command_response
@@ -20,9 +21,10 @@ class CommandResponseManager(object):
             self._command_response.success = False
             self._command_response.error = exc_type.__name__
             self._command_response.log = exc_val.message
+            # self._logger.critical(traceback.print_exception(exc_type, exc_val, exc_tb))
         else:
             self._command_response.success = True
-        return True
+            # return True
 
 
 class CommandExecutor(object):
@@ -35,7 +37,7 @@ class CommandExecutor(object):
     @abstractmethod
     def _driver_instance(self):
         """
-        Create instance of driver commands
+        Create instance of the driver
         :return: 
         :rtype: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         """
@@ -43,6 +45,7 @@ class CommandExecutor(object):
 
     def execute_commands(self, command_requests):
         """
+        Execute bunch of commands
         :param command_requests: 
         :return:
         :rtype: list
@@ -60,8 +63,7 @@ class CommandExecutor(object):
 
         return command_responses
 
-    @staticmethod
-    def login_executor(command_request, driver_instance):
+    def login_executor(self, command_request, driver_instance):
         """
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
@@ -74,12 +76,11 @@ class CommandExecutor(object):
         user = command_request.command_params.get('User')
         password = command_request.command_params.get('Password')
 
-        with CommandResponseManager(command_request) as command_response:
+        with CommandResponseManager(command_request, self._logger) as command_response:
             command_response.response_info = driver_instance.login(address, user, password)
         return command_response
 
-    @staticmethod
-    def get_resource_description_executor(command_request, driver_instance):
+    def get_resource_description_executor(self, command_request, driver_instance):
         """
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
@@ -89,12 +90,11 @@ class CommandExecutor(object):
         :rtype: CommandResponse
         """
         address = command_request.command_params.get('Address')
-        with CommandResponseManager(command_request) as command_response:
+        with CommandResponseManager(command_request, self._logger) as command_response:
             command_response.response_info = driver_instance.get_resource_description(address)
         return command_response
 
-    @staticmethod
-    def map_bidi_executor(command_request, driver_instance):
+    def map_bidi_executor(self, command_request, driver_instance):
         """
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
@@ -102,12 +102,28 @@ class CommandExecutor(object):
         :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         :return: 
         """
-        with CommandResponseManager(command_request) as command_response:
-            pass
+        port_a = command_request.command_params.get('MapPort_A')
+        port_b = command_request.command_params.get('MapPort_B')
+        # mapping_group = command_request.command_params('MappingGroupName')
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            command_response.response_info = driver_instance.map_bidi(port_a, port_b)
         return command_response
 
-    @staticmethod
-    def get_state_id_executor(command_request, driver_instance):
+    def map_clear_to_executor(self, command_request, driver_instance):
+        """
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
+        :return: 
+        """
+        src_port = command_request.command_params.get('SrcPort')
+        dst_port = command_request.command_params.get('DstPort')
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            command_response.response_info = driver_instance.map_clear_to(src_port, dst_port)
+        return command_response
+
+    def get_state_id_executor(self, command_request, driver_instance):
         """
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
@@ -116,6 +132,6 @@ class CommandExecutor(object):
         :return:
         :rtype: CommandResponse
         """
-        with CommandResponseManager(command_request) as command_response:
+        with CommandResponseManager(command_request, self._logger) as command_response:
             pass
         return command_response

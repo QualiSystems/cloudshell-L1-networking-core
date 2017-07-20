@@ -1,4 +1,5 @@
 import os
+
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
 
 
@@ -83,7 +84,7 @@ class ResourceInfoBuilder(object):
                 ResourceInfoBuilder._build_resource_child_nodes(child_node, child_resource)
 
     @staticmethod
-    def build_resource_info_node(base_resource):
+    def build_resource_info_nodes(base_resource):
         """
         Build tree of xml nodes for resource tree
         :param base_resource:
@@ -91,6 +92,6 @@ class ResourceInfoBuilder(object):
         :return:
         :type: xml.etree.ElementTree.Element
         """
-        base_resource_node = ResourceInfoBuilder._build_resource_node(base_resource)
-        ResourceInfoBuilder._build_resource_child_nodes(base_resource_node, base_resource)
-        return base_resource_node
+        resource_node = ResourceInfoBuilder._build_resource_node(base_resource)
+        ResourceInfoBuilder._build_resource_child_nodes(resource_node, base_resource)
+        return resource_node

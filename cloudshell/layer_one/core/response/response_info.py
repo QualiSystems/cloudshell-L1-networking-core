@@ -18,11 +18,15 @@ class ResponseInfo(object):
 
 class ResourceDescriptionResponseInfo(ResponseInfo):
     def __init__(self, resource_info):
-        self.resource_info = resource_info
+        if isinstance(resource_info, list):
+            self.resource_info_list = resource_info
+        else:
+            self.resource_info_list = [resource_info]
 
     def build_xml_node(self):
         response_info_node = self._build_response_info_node()
-        response_info_node.append(ResourceInfoBuilder.build_resource_info_node(self.resource_info))
+        for resource_info in self.resource_info_list:
+            response_info_node.append(ResourceInfoBuilder.build_resource_info_nodes(resource_info))
         return response_info_node
 
 
