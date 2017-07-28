@@ -2,6 +2,7 @@ from abc import abstractmethod
 
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
 from cloudshell.layer_one.core.response.command_response import CommandResponse
+from cloudshell.layer_one.core.response.response_info import KeyValueResponseInfo
 
 
 class CommandResponseManager(object):
@@ -30,9 +31,11 @@ class CommandResponseManager(object):
 class CommandExecutor(object):
     def __init__(self, logger):
         self._logger = logger
+        self._state_id = None
         self._registered_commands = {'Login': self.login_executor,
                                      'GetResourceDescription': self.get_resource_description_executor,
-                                     'GetStateId': self.get_state_id_executor}
+                                     'GetStateId': self.get_state_id_executor,
+                                     'SetStateId': self.set_state_id_executor}
 
     @abstractmethod
     def _driver_instance(self):
@@ -132,6 +135,20 @@ class CommandExecutor(object):
         :return:
         :rtype: CommandResponse
         """
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            command_response.response_info = KeyValueResponseInfo({'StateId': self._state_id})
+        return command_response
+
+    def set_state_id_executor(self, command_request, driver_instance):
+        """
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
+        :return:
+        :rtype: CommandResponse
+        """
+        self._state_id = command_request.command_params.get('StateId')
         with CommandResponseManager(command_request, self._logger) as command_response:
             pass
         return command_response

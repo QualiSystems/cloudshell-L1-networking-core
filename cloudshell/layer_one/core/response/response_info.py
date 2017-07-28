@@ -30,7 +30,7 @@ class ResourceDescriptionResponseInfo(ResponseInfo):
         return response_info_node
 
 
-class SimpleResponseInfo(ResponseInfo):
+class KeyValueResponseInfo(ResponseInfo):
     def __init__(self, attributes_dict):
         """
         :param attributes_dict:

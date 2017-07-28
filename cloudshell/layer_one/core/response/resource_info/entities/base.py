@@ -1,5 +1,5 @@
 class ResourceInfo(object):
-    def __init__(self, resource_id, name, family_name, model_name, serial_number):
+    def __init__(self, resource_id, name, family_name, model_name, serial_number, mapping=None):
         self.resource_id = resource_id
         self.name = name
         self.family_name = family_name
@@ -9,7 +9,7 @@ class ResourceInfo(object):
         self.child_resources = {}
         self.attributes = []
         self._parent_resource = None
-        self.mapping = None
+        self.mapping = mapping
 
     def set_parent_resource(self, parent_resource):
         """
@@ -46,6 +46,7 @@ class ResourceInfo(object):
 class Attribute(object):
     NUMERIC = 'Numeric'
     STRING = 'String'
+    BOOLEAN = 'Boolean'
 
     def __init__(self, name, attr_type, value):
         self.name = name

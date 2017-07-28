@@ -54,17 +54,17 @@ class ResourceInfoBuilder(object):
         return node
 
     @staticmethod
-    def _build_mapping_node(resource):
+    def _build_mapping_node(mapping_node):
         """
         Build mapping node
-        :param resource: 
-        :type resource: cloudshell.layer_one.core.response.entities.base.ResourceInfo
+        :param mapping_node: 
+        :type mapping_node: cloudshell.layer_one.core.response.entities.base.ResourceInfo
         :return: Mapping node
         :rtype: xml.etree.ElementTree.Element
         """
         node = XMLHelper.build_node_from_string(ResourceInfoBuilder.MAPPING_TEMPLATE)
         child_incoming_node = node.find("IncomingMapping")
-        child_incoming_node.text = resource.address
+        child_incoming_node.text = mapping_node.address
         return node
 
     @staticmethod
