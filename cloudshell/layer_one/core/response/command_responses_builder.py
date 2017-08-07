@@ -54,24 +54,26 @@ class CommandResponsesBuilder(object):
         :rtype: xml.etree.ElementTree.Element
         """
         responses_node = XMLHelper.build_node_from_string(CommandResponsesBuilder.RESPONSES_TEMPLATE)
+        tree = ElementTree.ElementTree(responses_node)
         for command_response in responses:
             responses_node.append(CommandResponsesBuilder._build_command_response_node(command_response))
-        return responses_node
+        return tree.getroot()
 
     @staticmethod
-    def to_string(xml_node):
+    def to_string(root):
         """
         Generate string for xml node
-        :param xml_node: 
+        :param root: 
         :return: 
         :type str
         """
-        return ElementTree.tostring(xml_node)
+        return ElementTree.tostring(root, encoding='utf8', method='xml')
 
     @staticmethod
     def build_xml_error(error_code, log_message):
         command_response_node = XMLHelper.build_node_from_string(CommandResponsesBuilder.ERROR_RESPONSE)
+        tree = ElementTree.ElementTree(command_response_node)
         namespace = XMLHelper.get_node_namespace(command_response_node)
         command_response_node.find(namespace + 'ErrorCode').text = str(error_code)
         command_response_node.find(namespace + 'Log').text = str(log_message)
-        return command_response_node
+        return tree.getroot()
