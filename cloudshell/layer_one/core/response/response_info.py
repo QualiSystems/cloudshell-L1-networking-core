@@ -16,7 +16,10 @@ class ResponseInfo(object):
 
     @staticmethod
     def _build_response_info_node():
-        return Element('ResponseInfo')
+        element = Element('ResponseInfo')
+        element.attrib['xmlns:xsi'] = "http://www.w3.org/2001/XMLSchema-instance"
+        element.attrib['xsi:type'] = "ResourceInfoResponse"
+        return element
 
 
 class ResourceDescriptionResponseInfo(ResponseInfo):

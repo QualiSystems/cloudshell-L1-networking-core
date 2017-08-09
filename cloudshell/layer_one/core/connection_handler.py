@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import re
 import socket
 import traceback
@@ -82,5 +79,5 @@ class ConnectionHandler(Thread):
         :param response_string: 
         :return: 
         """
-        self._connection_socket.send(response_string + self.END_COMMAND)
+        self._connection_socket.send(response_string + self.END_COMMAND + self.END_COMMAND)
         self._xml_logger.info(response_string)
