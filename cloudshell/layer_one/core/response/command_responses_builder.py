@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 from xml.etree import ElementTree
 
@@ -67,7 +70,7 @@ class CommandResponsesBuilder(object):
         :return: 
         :type str
         """
-        return ElementTree.tostring(root, encoding='utf8', method='xml').replace('\n', '\r\n')
+        return ElementTree.tostring(root, encoding='UTF-8', method='xml').replace('\n', '\r\n')
 
     @staticmethod
     def build_xml_error(error_code, log_message):

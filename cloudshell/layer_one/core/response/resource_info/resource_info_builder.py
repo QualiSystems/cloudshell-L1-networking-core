@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper

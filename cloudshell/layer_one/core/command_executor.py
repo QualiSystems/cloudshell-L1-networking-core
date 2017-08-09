@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from abc import abstractmethod
 
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException

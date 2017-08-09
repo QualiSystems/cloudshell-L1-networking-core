@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
 from cloudshell.layer_one.core.request.command_request import CommandRequest
 

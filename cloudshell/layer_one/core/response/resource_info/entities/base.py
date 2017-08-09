@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+
 class ResourceInfo(object):
     def __init__(self, resource_id, name, family_name, model_name, serial_number, mapping=None):
         self.resource_id = resource_id

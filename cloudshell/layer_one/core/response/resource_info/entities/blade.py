@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from cloudshell.layer_one.core.response.resource_info.entities.base import ResourceInfo, Attribute
 
 

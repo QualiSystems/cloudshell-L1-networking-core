@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 
 from pkgutil import extend_path
-path = extend_path(__path__, __name__)
+__path__ = extend_path(__path__, __name__)

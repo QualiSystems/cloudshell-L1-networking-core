@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+
 class CommandRequest(object):
     def __init__(self, command_name, command_id, command_params):
         """
