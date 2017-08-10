@@ -24,7 +24,7 @@ class DriverCommandsInterface(object):
         pass
 
     @abstractmethod
-    def map_clear(self, src_port, dst_port):
+    def map_clear(self, ports):
         pass
 
     # @abstractmethod

@@ -137,8 +137,7 @@ class CommandExecutor(object):
         :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         :return: 
         """
-        src_port = command_request.command_params.get('MapPort')[0]
-        dst_port = command_request.command_params.get('MapPort')[1]
+        ports = command_request.command_params.get('MapPort')
         with CommandResponseManager(command_request, self._logger) as command_response:
-            command_response.response_info = driver_instance.map_clear(src_port, dst_port)
+            command_response.response_info = driver_instance.map_clear(ports)
         return command_response
