@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from collections import defaultdict
 
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
 from cloudshell.layer_one.core.request.command_request import CommandRequest
@@ -20,13 +21,14 @@ class RequestsParser(object):
         """
         command_name = command_node.get('CommandName')
         command_id = command_node.get('CommandId')
-        command_params = {}
+        command_params = defaultdict(list)
         namespace = XMLHelper.get_node_namespace(command_node)
         parameters_node = command_node.find(namespace + 'Parameters')
 
         if parameters_node is not None:
             for param_node in parameters_node:
-                command_params[param_node.tag.replace(namespace, '')] = param_node.text
+                key = param_node.tag.replace(namespace, '')
+                command_params[key].append(param_node.text)
 
         return CommandRequest(command_name, command_id, command_params)
 
