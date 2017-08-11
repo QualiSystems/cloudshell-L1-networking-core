@@ -37,6 +37,7 @@ class CommandExecutor(object):
         self._registered_commands = {'Login': self.login_executor,
                                      'GetResourceDescription': self.get_resource_description_executor,
                                      'MapBidi': self.map_bidi_executor,
+                                     'MapUni': self.map_uni_executor,
                                      'MapClearTo': self.map_clear_to_executor,
                                      'MapClear': self.map_clear_executor}
 
@@ -115,7 +116,7 @@ class CommandExecutor(object):
             command_response.response_info = driver_instance.map_bidi(port_a, port_b)
         return command_response
 
-    def map_clear_to_executor(self, command_request, driver_instance):
+    def map_uni_executor(self, command_request, driver_instance):
         """
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
@@ -125,8 +126,24 @@ class CommandExecutor(object):
         """
         src_port = command_request.command_params.get('SrcPort')[0]
         dst_port = command_request.command_params.get('DstPort')[0]
+        # mapping_group = command_request.command_params('MappingGroupName')
         with CommandResponseManager(command_request, self._logger) as command_response:
-            command_response.response_info = driver_instance.map_clear_to(src_port, dst_port)
+            command_response.response_info = driver_instance.map_uni(src_port, dst_port)
+        return command_response
+
+    def map_clear_to_executor(self, command_request, driver_instance):
+        """
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
+        :return: 
+        """
+        src_port = command_request.command_params.get('SrcPort')[0]
+        dst_ports = command_request.command_params.get('DstPort')
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            for dst_port in dst_ports:
+                driver_instance.map_clear_to(src_port, dst_port)
         return command_response
 
     def map_clear_executor(self, command_request, driver_instance):

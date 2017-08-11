@@ -20,6 +20,10 @@ class DriverCommandsInterface(object):
         pass
 
     @abstractmethod
+    def map_uni(self, src_port, dst_port):
+        pass
+
+    @abstractmethod
     def map_clear_to(self, src_port, dst_port):
         pass
 
@@ -27,10 +31,10 @@ class DriverCommandsInterface(object):
     def map_clear(self, ports):
         pass
 
-    # @abstractmethod
-    # def set_speed_manual(self, src_port, dst_port, speed, duplex):
-    #     pass
-    #
-    # @abstractmethod
-    # def get_attribute_value(self, address, attribute_name):
-    #     pass
+        # @abstractmethod
+        # def set_speed_manual(self, src_port, dst_port, speed, duplex):
+        #     pass
+        #
+        # @abstractmethod
+        # def get_attribute_value(self, address, attribute_name):
+        #     pass
