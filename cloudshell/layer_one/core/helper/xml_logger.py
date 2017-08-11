@@ -1,5 +1,12 @@
+import os
+
+
 class XMLLogger(object):
     def __init__(self, path):
+        try:
+            os.makedirs(os.path.dirname(path))
+        except:
+            pass
         self._descriptor = open(path, 'w+')
 
     def __del__(self):
