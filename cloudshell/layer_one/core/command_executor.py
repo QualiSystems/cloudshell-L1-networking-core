@@ -125,10 +125,11 @@ class CommandExecutor(object):
         :return: 
         """
         src_port = command_request.command_params.get('SrcPort')[0]
-        dst_port = command_request.command_params.get('DstPort')[0]
+        dst_ports = command_request.command_params.get('DstPort')
         # mapping_group = command_request.command_params('MappingGroupName')
         with CommandResponseManager(command_request, self._logger) as command_response:
-            command_response.response_info = driver_instance.map_uni(src_port, dst_port)
+            for dst_port in dst_ports:
+                driver_instance.map_uni(src_port, dst_port)
         return command_response
 
     def map_clear_to_executor(self, command_request, driver_instance):

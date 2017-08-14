@@ -48,6 +48,7 @@ class DriverListener(object):
         """Initialize socket and start listening"""
         host = host if host else self.SERVER_HOST
         port = port if port else self.SERVER_PORT
+        print "Listen address {0}:{1}".format(host, port)
         server_socket = self._initialize_socket(host, port)
         while self._is_running:
             connection, connection_data = server_socket.accept()
