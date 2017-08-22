@@ -19,7 +19,7 @@ class RuntimeConfiguration(Singleton):
         'CLI': {
             'TYPE': ['SSH',
                      'TELNET'],
-            'PORT': {
+            'PORTS': {
                 'SSH': 22,
                 'TELNET': 23
             }
