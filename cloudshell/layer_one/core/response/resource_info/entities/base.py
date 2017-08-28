@@ -52,6 +52,8 @@ class Attribute(object):
     STRING = 'String'
     BOOLEAN = 'Boolean'
 
+    DEFAULT_VALUE = 'NA'
+
     def __init__(self, name, attr_type, value):
         self.name = name
         self.type = attr_type
