@@ -12,5 +12,9 @@ class NumericAttribute(Attribute):
 
 
 class BooleanAttribute(Attribute):
+    TRUE = 'True'
+    FALSE = 'False'
+    DEFAULT_VALUE = TRUE
+
     def __init__(self, name, value):
         super(BooleanAttribute, self).__init__(name, Attribute.BOOLEAN, value)
