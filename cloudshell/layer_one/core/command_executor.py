@@ -23,11 +23,11 @@ class CommandResponseManager(object):
         if exc_val:
             self._command_response.success = False
             self._command_response.error = exc_type.__name__
-            self._command_response.log = exc_val.message
+            self._command_response.log = str(exc_val)
             # self._logger.critical(traceback.print_exception(exc_type, exc_val, exc_tb))
         else:
             self._command_response.success = True
-            # return True
+        return True
 
 
 class CommandExecutor(object):
