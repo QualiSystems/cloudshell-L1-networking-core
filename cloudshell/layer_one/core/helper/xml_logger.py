@@ -2,6 +2,8 @@ import os
 
 
 class XMLLogger(object):
+    """Simple logger used for xml"""
+
     def __init__(self, path):
         try:
             os.makedirs(os.path.dirname(path))

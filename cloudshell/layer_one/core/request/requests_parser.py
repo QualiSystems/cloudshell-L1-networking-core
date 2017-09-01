@@ -7,6 +7,10 @@ from cloudshell.layer_one.core.request.command_request import CommandRequest
 
 
 class RequestsParser(object):
+    """
+    Parse request data and build command requests
+    """
+
     def __init__(self, logger):
         self.logger = logger
 

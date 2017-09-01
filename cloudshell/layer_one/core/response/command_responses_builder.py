@@ -74,6 +74,12 @@ class CommandResponsesBuilder(object):
 
     @staticmethod
     def build_xml_error(error_code, log_message):
+        """
+        Build error response
+        :param error_code: 
+        :param log_message: 
+        :return: 
+        """
         command_response_node = XMLHelper.build_node_from_string(CommandResponsesBuilder.ERROR_RESPONSE)
         tree = ElementTree.ElementTree(command_response_node)
         namespace = XMLHelper.get_node_namespace(command_response_node)

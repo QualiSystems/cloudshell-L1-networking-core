@@ -31,10 +31,22 @@ class DriverCommandsInterface(object):
     def map_clear(self, ports):
         pass
 
-        # @abstractmethod
-        # def set_speed_manual(self, src_port, dst_port, speed, duplex):
-        #     pass
-        #
-        # @abstractmethod
-        # def get_attribute_value(self, address, attribute_name):
-        #     pass
+    @abstractmethod
+    def get_attribute_value(self, address, attribute_name):
+        pass
+
+    @abstractmethod
+    def set_attribute_value(self, address, attribute_name, attribute_value):
+        pass
+
+    @abstractmethod
+    def get_state_id(self):
+        pass
+
+    @abstractmethod
+    def set_state_id(self, state_id):
+        pass
+
+    @abstractmethod
+    def map_tap(self, src_port, dst_port):
+        pass

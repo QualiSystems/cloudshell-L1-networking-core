@@ -1,10 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from cloudshell.layer_one.core.response.resource_info.entities.base import ResourceInfo, Attribute
+from cloudshell.layer_one.core.response.resource_info.entities.base import ResourceInfo
 
 
 class Chassis(ResourceInfo):
+    """
+    Chassis resource entity
+    """
     NAME_TEMPLATE = 'Chassis{}'
     FAMILY_NAME = 'L1 Switch'
 
@@ -17,6 +20,3 @@ class Chassis(ResourceInfo):
     @property
     def address(self):
         return self._address
-
-    def attr_volt_monitor_1(self, value):
-        self.attributes.append(Attribute('Volt Monitor 1', Attribute.NUMERIC, value))

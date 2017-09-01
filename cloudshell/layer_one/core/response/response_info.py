@@ -8,10 +8,14 @@ from cloudshell.layer_one.core.response.resource_info.resource_info_builder impo
 
 
 class ResponseInfo(object):
+    """
+    Basic response builder
+    """
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def build_xml_node(self):
+        """Build xml node"""
         pass
 
     @staticmethod
@@ -20,6 +24,8 @@ class ResponseInfo(object):
 
 
 class ResourceDescriptionResponseInfo(ResponseInfo):
+    """Resource description builder"""
+
     def __init__(self, resource_info):
         if isinstance(resource_info, list):
             self.resource_info_list = resource_info
@@ -27,6 +33,7 @@ class ResourceDescriptionResponseInfo(ResponseInfo):
             self.resource_info_list = [resource_info]
 
     def build_xml_node(self):
+        """Build xml node for resource description"""
         response_info_node = self._build_response_info_node()
         response_info_node.attrib['xmlns:xsi'] = "http://www.w3.org/2001/XMLSchema-instance"
         response_info_node.attrib['xsi:type'] = "ResourceInfoResponse"
@@ -36,6 +43,8 @@ class ResourceDescriptionResponseInfo(ResponseInfo):
 
 
 class KeyValueResponseInfo(ResponseInfo):
+    """Simple key value builde, used for Get/Set attribute"""
+
     def __init__(self, attributes_dict):
         """
         :param attributes_dict:

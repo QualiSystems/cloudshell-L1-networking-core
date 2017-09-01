@@ -3,6 +3,10 @@
 
 
 class ResourceInfo(object):
+    """
+    Basic resource info entity
+    """
+
     def __init__(self, resource_id, name, family_name, model_name, serial_number, mapping=None):
         self.resource_id = resource_id
         self.name = name
@@ -17,6 +21,7 @@ class ResourceInfo(object):
 
     def set_parent_resource(self, parent_resource):
         """
+        Set parent
         :param parent_resource:
         :type parent_resource: ResourceInfo
         :return: 
@@ -26,6 +31,10 @@ class ResourceInfo(object):
 
     @property
     def address(self):
+        """
+        Resource address
+        :return: 
+        """
         if self._parent_resource and self._parent_resource.address:
             address = '{0}/{1}'.format(self._parent_resource.address, str(self.resource_id))
         else:
@@ -40,7 +49,7 @@ class ResourceInfo(object):
 
     def add_mapping(self, resource_info):
         """
-        Resource mapping
+        Resource mapping, used for port resources
         :param resource_info: 
         :return: 
         """
@@ -48,6 +57,9 @@ class ResourceInfo(object):
 
 
 class Attribute(object):
+    """
+    Basic attribute entity
+    """
     NUMERIC = 'Numeric'
     STRING = 'String'
     BOOLEAN = 'Boolean'

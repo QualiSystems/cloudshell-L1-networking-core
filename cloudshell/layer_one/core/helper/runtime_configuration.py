@@ -15,6 +15,9 @@ class Singleton(object):
 
 
 class RuntimeConfiguration(Singleton):
+    """
+    Runtime configuration helper
+    """
     DEFAULT_CONFIGURATION = {
         'CLI': {
             'TYPE': ['SSH',
@@ -43,6 +46,7 @@ class RuntimeConfiguration(Singleton):
         return self._configuration
 
     def _read_configuration(self, config_path):
+        """Read configuration from file if exists or use default"""
         if config_path and os.path.isfile(config_path) and os.access(config_path, os.R_OK):
             with open(config_path, 'r') as config:
                 loaded_configuration = load(config)
@@ -55,7 +59,7 @@ class RuntimeConfiguration(Singleton):
 
     def read_key(self, complex_key):
         """
-        Value for complex key
+        Value for complex key like CLI.PORTS
         :param complex_key: 
         :return:
         """

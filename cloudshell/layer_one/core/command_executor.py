@@ -31,6 +31,10 @@ class CommandResponseManager(object):
 
 
 class CommandExecutor(object):
+    """
+    Execute driver commands
+    """
+
     def __init__(self, logger):
         self._logger = logger
         self._state_id = None
@@ -39,7 +43,13 @@ class CommandExecutor(object):
                                      'MapBidi': self.map_bidi_executor,
                                      'MapUni': self.map_uni_executor,
                                      'MapClearTo': self.map_clear_to_executor,
-                                     'MapClear': self.map_clear_executor}
+                                     'MapClear': self.map_clear_executor,
+                                     'GetStateId': self.get_state_id_executor,
+                                     'SetStateId': self.set_state_id_executor,
+                                     'GetAttributeValue': self.get_attribute_value_executor,
+                                     'SetAttributeValue': self.set_attribute_value_executor,
+                                     'MapTap': self.map_tap_executor,
+                                     }
 
     @abstractmethod
     def _driver_instance(self):
@@ -52,6 +62,7 @@ class CommandExecutor(object):
 
     def execute_commands(self, command_requests):
         """
+        Execute list of command requests
         Execute bunch of commands
         :param command_requests: 
         :return:
@@ -72,6 +83,7 @@ class CommandExecutor(object):
 
     def login_executor(self, command_request, driver_instance):
         """
+        Execute Login command
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
@@ -89,6 +101,7 @@ class CommandExecutor(object):
 
     def get_resource_description_executor(self, command_request, driver_instance):
         """
+        Execute GetResourceDescription command
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
@@ -103,30 +116,32 @@ class CommandExecutor(object):
 
     def map_bidi_executor(self, command_request, driver_instance):
         """
+        Execute MapBidi command
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
         :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
-        :return: 
+        :return:
+        :rtype: CommandResponse
         """
         port_a = command_request.command_params.get('MapPort_A')[0]
         port_b = command_request.command_params.get('MapPort_B')[0]
-        # mapping_group = command_request.command_params('MappingGroupName')
         with CommandResponseManager(command_request, self._logger) as command_response:
             command_response.response_info = driver_instance.map_bidi(port_a, port_b)
         return command_response
 
     def map_uni_executor(self, command_request, driver_instance):
         """
+        Execute MapUni command
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
         :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
-        :return: 
+        :return:
+        :rtype: CommandResponse
         """
         src_port = command_request.command_params.get('SrcPort')[0]
         dst_ports = command_request.command_params.get('DstPort')
-        # mapping_group = command_request.command_params('MappingGroupName')
         with CommandResponseManager(command_request, self._logger) as command_response:
             for dst_port in dst_ports:
                 driver_instance.map_uni(src_port, dst_port)
@@ -134,11 +149,13 @@ class CommandExecutor(object):
 
     def map_clear_to_executor(self, command_request, driver_instance):
         """
+        Execute MapClear command
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
         :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
-        :return: 
+        :return:
+        :rtype: CommandResponse
         """
         src_port = command_request.command_params.get('SrcPort')[0]
         dst_ports = command_request.command_params.get('DstPort')
@@ -149,13 +166,96 @@ class CommandExecutor(object):
 
     def map_clear_executor(self, command_request, driver_instance):
         """
+        Execute MapClear command
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
         :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         :return: 
+        :rtype: CommandResponse
         """
         ports = command_request.command_params.get('MapPort')
         with CommandResponseManager(command_request, self._logger) as command_response:
             command_response.response_info = driver_instance.map_clear(ports)
+        return command_response
+
+    def get_state_id_executor(self, command_request, driver_instance):
+        """
+        Execute GetStateId command
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :return:
+        :rtype: CommandResponse
+        """
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            command_response.response_info = driver_instance.get_state_id()
+        return command_response
+
+    def set_state_id_executor(self, command_request, driver_instance):
+        """
+        Execute SetStateId command
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :return:
+        :rtype: CommandResponse
+        """
+
+        state_id = command_request.command_params.get('StateId')[0]
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            command_response.response_info = driver_instance.set_state_id(state_id)
+        return command_response
+
+    def get_attribute_value_executor(self, command_request, driver_instance):
+        """
+        Execute GetAttributeValue command
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :return:
+        :rtype: CommandResponse
+        """
+        address = command_request.command_params.get('Address')[0]
+        attribute_name = command_request.command_params.get('Attribute')[0]
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            command_response.response_info = driver_instance.get_attribute_value(address, attribute_name)
+        return command_response
+
+    def set_attribute_value_executor(self, command_request, driver_instance):
+        """
+        Execute SetAttributeValue command
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :return:
+        :rtype: CommandResponse
+        """
+        address = command_request.command_params.get('Address')[0]
+        attribute_name = command_request.command_params.get('Attribute')[0]
+        attribute_value = command_request.command_params.get('Value')[0]
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            command_response.response_info = driver_instance.set_attribute_value(address, attribute_name,
+                                                                                 attribute_value)
+        return command_response
+
+    def map_tap_executor(self, command_request, driver_instance):
+        """
+        Execute MapTap command
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :return:
+        :rtype: CommandResponse
+        """
+        src_port = command_request.command_params.get('SrcPort')[0]
+        dst_ports = command_request.command_params.get('DstPort')
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            for dst_port in dst_ports:
+                driver_instance.map_tap(src_port, dst_port)
         return command_response

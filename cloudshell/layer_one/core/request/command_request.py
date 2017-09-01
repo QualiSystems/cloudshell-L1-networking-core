@@ -5,7 +5,7 @@
 class CommandRequest(object):
     def __init__(self, command_name, command_id, command_params):
         """
-        Command entity
+        Command request entity
         :param command_name: 
         :param command_id: 
         :param command_params:

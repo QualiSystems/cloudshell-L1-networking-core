@@ -2,16 +2,27 @@ from cloudshell.layer_one.core.response.resource_info.entities.base import Attri
 
 
 class StringAttribute(Attribute):
+    """
+    String attribute
+    """
+
     def __init__(self, name, value):
         super(StringAttribute, self).__init__(name, Attribute.STRING, value)
 
 
 class NumericAttribute(Attribute):
+    """
+    Numeric attribute
+    """
+
     def __init__(self, name, value):
         super(NumericAttribute, self).__init__(name, Attribute.NUMERIC, value)
 
 
 class BooleanAttribute(Attribute):
+    """
+    Boolean attribute
+    """
     TRUE = 'True'
     FALSE = 'False'
     DEFAULT_VALUE = TRUE

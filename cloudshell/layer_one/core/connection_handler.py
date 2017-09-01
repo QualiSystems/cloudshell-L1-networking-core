@@ -12,12 +12,14 @@ class ConnectionClosedException(Exception):
 
 
 class ConnectionHandler(Thread):
+    """
+    Handle connections
+    """
     REQUEST_END = r'</Commands>'
     END_COMMAND = '\r\n'
 
     def __init__(self, connection_socket, command_executor, xml_logger, logger, buffer_size=2048):
         """
-        
         :param connection_socket:
         :type connection_socket: socket.socket
         :param command_executor:
@@ -34,6 +36,7 @@ class ConnectionHandler(Thread):
         self._buffer_size = buffer_size
 
     def run(self):
+        """Start handling new connection"""
         while True:
             try:
                 command_requests = self._read_request_commands()
@@ -52,6 +55,10 @@ class ConnectionHandler(Thread):
                 raise
 
     def _read_socket(self):
+        """
+        Read data from socket
+        :return: 
+        """
         data = ''
         while True:
             try:
@@ -67,6 +74,7 @@ class ConnectionHandler(Thread):
         return data
 
     def _read_request_commands(self):
+        """Read data and create requests"""
         request_string = self._read_socket()
         self._xml_logger.info(request_string.replace('\r', '') + "\n\n")
         requests = RequestsParser.parse_request_commands(request_string)
