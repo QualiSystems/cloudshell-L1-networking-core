@@ -52,7 +52,7 @@ class CommandExecutor(object):
                                      }
 
     @abstractmethod
-    def _driver_instance(self):
+    def driver_instance(self):
         """
         Create instance of the driver
         :return: 
@@ -68,7 +68,7 @@ class CommandExecutor(object):
         :return:
         :rtype: list
         """
-        driver = self._driver_instance()
+        driver = self.driver_instance()
         command_responses = []
         for command_request in command_requests:
             self._logger.info('Executing command {}'.format(command_request.command_name))
