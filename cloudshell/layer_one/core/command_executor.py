@@ -35,7 +35,8 @@ class CommandExecutor(object):
     Execute driver commands
     """
 
-    def __init__(self, logger):
+    def __init__(self, driver_instance, logger):
+        self._driver_instance = driver_instance
         self._logger = logger
         self._state_id = None
         self._registered_commands = {'Login': self.login_executor,
@@ -58,7 +59,7 @@ class CommandExecutor(object):
         :return: 
         :rtype: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         """
-        pass
+        return self.driver_instance
 
     def execute_commands(self, command_requests):
         """

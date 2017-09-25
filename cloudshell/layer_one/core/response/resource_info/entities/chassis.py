@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+from cloudshell.layer_one.core.response.resource_info.entities.attributes import StringAttribute
 from cloudshell.layer_one.core.response.resource_info.entities.base import ResourceInfo
 
 
@@ -20,3 +20,15 @@ class Chassis(ResourceInfo):
     @property
     def address(self):
         return self._address
+
+    def set_model_name(self, value):
+        if value:
+            self.attributes.append(StringAttribute('Model Name', value))
+
+    def set_serial_number(self, value):
+        if value:
+            self.attributes.append(StringAttribute('Serial Number', value))
+
+    def set_os_version(self, value):
+        if value:
+            self.attributes.append(StringAttribute('OS Version', value))
