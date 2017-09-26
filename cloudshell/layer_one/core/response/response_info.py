@@ -65,7 +65,7 @@ class GetStateIdResponseInfo(ResponseInfo):
     ATTRIBUTE_NAME = 'StateId'
 
     def __init__(self, state_id):
-        self._state_id = state_id
+        self._state_id = str(state_id)
 
     def build_xml_node(self):
         response_info_node = self._build_response_info_node()
