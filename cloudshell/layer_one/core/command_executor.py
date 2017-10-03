@@ -144,8 +144,7 @@ class CommandExecutor(object):
         src_port = command_request.command_params.get('SrcPort')[0]
         dst_ports = command_request.command_params.get('DstPort')
         with CommandResponseManager(command_request, self._logger) as command_response:
-            for dst_port in dst_ports:
-                driver_instance.map_uni(src_port, dst_port)
+            driver_instance.map_uni(src_port, dst_ports)
         return command_response
 
     def map_clear_to_executor(self, command_request, driver_instance):
@@ -161,8 +160,7 @@ class CommandExecutor(object):
         src_port = command_request.command_params.get('SrcPort')[0]
         dst_ports = command_request.command_params.get('DstPort')
         with CommandResponseManager(command_request, self._logger) as command_response:
-            for dst_port in dst_ports:
-                driver_instance.map_clear_to(src_port, dst_port)
+            driver_instance.map_clear_to(src_port, dst_ports)
         return command_response
 
     def map_clear_executor(self, command_request, driver_instance):
@@ -186,7 +184,7 @@ class CommandExecutor(object):
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
-        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         :return:
         :rtype: CommandResponse
         """
@@ -200,7 +198,7 @@ class CommandExecutor(object):
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
-        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         :return:
         :rtype: CommandResponse
         """
@@ -216,7 +214,7 @@ class CommandExecutor(object):
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
-        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         :return:
         :rtype: CommandResponse
         """
@@ -232,7 +230,7 @@ class CommandExecutor(object):
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
-        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         :return:
         :rtype: CommandResponse
         """
@@ -250,13 +248,12 @@ class CommandExecutor(object):
         :param command_request:
         :type command_request: cloudshell.layer_one.core.entities.command.Command
         :param driver_instance
-        :type driver_instance: mrv.mrv_driver_commands.MrvDriverCommands
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
         :return:
         :rtype: CommandResponse
         """
         src_port = command_request.command_params.get('SrcPort')[0]
         dst_ports = command_request.command_params.get('DstPort')
         with CommandResponseManager(command_request, self._logger) as command_response:
-            for dst_port in dst_ports:
-                driver_instance.map_tap(src_port, dst_port)
+            driver_instance.map_tap(src_port, dst_ports)
         return command_response

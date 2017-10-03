@@ -38,21 +38,21 @@ class DriverCommandsInterface(object):
         pass
 
     @abstractmethod
-    def map_uni(self, src_port, dst_port):
+    def map_uni(self, src_port, dst_ports):
         """
         MapUni driver command
         :param src_port: 
-        :param dst_port: 
+        :param dst_ports:
         :return: 
         """
         pass
 
     @abstractmethod
-    def map_clear_to(self, src_port, dst_port):
+    def map_clear_to(self, src_port, dst_ports):
         """
         MapClearTo driver command
         :param src_port: 
-        :param dst_port: 
+        :param dst_ports:
         :return: 
         """
         pass
@@ -105,11 +105,11 @@ class DriverCommandsInterface(object):
         pass
 
     @abstractmethod
-    def map_tap(self, src_port, dst_port):
+    def map_tap(self, src_port, dst_ports):
         """
         MapTap driver command
         :param src_port: 
-        :param dst_port: 
+        :param dst_ports:
         :return: 
         """
         pass
