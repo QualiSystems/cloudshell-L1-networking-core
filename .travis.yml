@@ -11,7 +11,7 @@ install:
     - python setup.py install
 
 script:
-    - nosetests
+    - nosetests --with-coverage --cover-package=cloudshell/layer_one/core tests
 
 after_success:
     - coveralls
