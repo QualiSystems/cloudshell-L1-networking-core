@@ -5,5 +5,5 @@
 [![Stories in Ready](https://badge.waffle.io/QualiSystems/cloudshell-L1-networking-core.svg?label=ready&title=Ready)](http://waffle.io/QualiSystems/cloudshell-L1-networking-core)
 
 
-This core package implements basic services and entities for L1 drivers.
+This is core package which implements basic services and entities for L1 drivers.
 Follow [L1 Driver Guide](https://github.com/QualiSystems/shell-L1-template/blob/dev/DEVGUIDE.md) how to use them.
