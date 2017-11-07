@@ -113,3 +113,16 @@ class DriverCommandsInterface(object):
         :return: 
         """
         pass
+
+    @abstractmethod
+    def set_speed_manual(self, src_port, dst_port, speed, duplex):
+        """
+        Set connection speed
+        Is not used for the new standard
+        :param src_port:
+        :param dst_port:
+        :param speed:
+        :param duplex:
+        :return:
+        """
+        pass

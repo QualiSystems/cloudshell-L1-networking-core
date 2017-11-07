@@ -50,6 +50,7 @@ class CommandExecutor(object):
                                      'GetAttributeValue': self.get_attribute_value_executor,
                                      'SetAttributeValue': self.set_attribute_value_executor,
                                      'MapTap': self.map_tap_executor,
+                                     'SetSpeedManual': self.set_speed_manual_executor,
                                      }
 
     @abstractmethod
@@ -256,4 +257,22 @@ class CommandExecutor(object):
         dst_ports = command_request.command_params.get('DstPort')
         with CommandResponseManager(command_request, self._logger) as command_response:
             driver_instance.map_tap(src_port, dst_ports)
+        return command_response
+
+    def set_speed_manual_executor(self, command_request, driver_instance):
+        """
+        Execute SetSpeedManual command
+        :param command_request:
+        :type command_request: cloudshell.layer_one.core.entities.command.Command
+        :param driver_instance
+        :type driver_instance: cloudshell.layer_one.core.driver_commands_interface.DriverCommandsInterface
+        :return:
+        :rtype: CommandResponse
+        """
+        src_port = command_request.command_params.get('SrcPort')[0]
+        dst_ports = command_request.command_params.get('DstPort')[0]
+        speed = command_request.command_params.get('Speed')[0]
+        duplex = command_request.command_params.get('Duplex')[0]
+        with CommandResponseManager(command_request, self._logger) as command_response:
+            driver_instance.set_speed_manual(src_port, dst_ports, speed, duplex)
         return command_response
