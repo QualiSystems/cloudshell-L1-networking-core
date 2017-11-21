@@ -11,7 +11,7 @@ class Port(ResourceInfo):
     """
     Port resource entity
     """
-    NAME_TEMPLATE = 'Port{}'
+    NAME_TEMPLATE = 'Port {}'
     FAMILY_NAME = 'L1 Switch Port'
 
     def __init__(self, resource_id, model_name, serial_number, mapping=None):

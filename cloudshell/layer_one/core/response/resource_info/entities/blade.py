@@ -6,7 +6,7 @@ from cloudshell.layer_one.core.response.resource_info.entities.base import Resou
 
 class Blade(ResourceInfo):
     """Blade resource entity"""
-    NAME_TEMPLATE = 'Blade{}'
+    NAME_TEMPLATE = 'Blade {}'
     FAMILY_NAME = 'L1 Switch Blade'
 
     def __init__(self, resource_id, model_name, serial_number):

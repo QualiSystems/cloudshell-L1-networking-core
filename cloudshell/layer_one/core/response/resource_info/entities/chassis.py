@@ -8,7 +8,7 @@ class Chassis(ResourceInfo):
     """
     Chassis resource entity
     """
-    NAME_TEMPLATE = 'Chassis{}'
+    NAME_TEMPLATE = 'Chassis {}'
     FAMILY_NAME = 'L1 Switch'
 
     def __init__(self, resource_id, address, model_name, serial_number):
