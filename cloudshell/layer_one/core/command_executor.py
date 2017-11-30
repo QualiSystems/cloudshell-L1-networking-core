@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import traceback
 from abc import abstractmethod
 
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
@@ -24,7 +23,7 @@ class CommandResponseManager(object):
             self._command_response.success = False
             self._command_response.error = exc_type.__name__
             self._command_response.log = str(exc_val)
-            self._logger.critical(traceback.print_exception(exc_type, exc_val, exc_tb))
+            self._logger.exception('Command Execution Error')
         else:
             self._command_response.success = True
         return True
