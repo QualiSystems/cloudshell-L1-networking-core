@@ -74,6 +74,9 @@ class DriverListener(object):
                                                     self._command_logger)
                 if self._debug_mode:
                     self._wait_for_debugger_attach()
-                    request_handler.run()
+                    try:
+                        request_handler.run()
+                    except:
+                        self._command_logger.exception('ConnectionHandler Error')
                 else:
                     request_handler.start()
