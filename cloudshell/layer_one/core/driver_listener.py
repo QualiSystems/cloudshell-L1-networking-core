@@ -26,7 +26,7 @@ class DriverListener(object):
         self._xml_logger = xml_logger
         self._is_running = False
 
-        self._debug_mode = RuntimeConfiguration().read_key('DRIVER_MODE') == 'DEBUG'
+        self._debug_mode = RuntimeConfiguration().read_key('DEBUG_ENABLED', 'FALSE').lower() == 'TRUE'
 
     def _initialize_socket(self, host, port):
         """
