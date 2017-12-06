@@ -57,10 +57,11 @@ class RuntimeConfiguration(Singleton):
     def _merge_configs(self, config_a, config_b):
         return config_b
 
-    def read_key(self, complex_key):
+    def read_key(self, complex_key, default_value=None):
         """
         Value for complex key like CLI.PORTS
-        :param complex_key: 
+        :param complex_key:
+        :param default_value: Default value
         :return:
         """
         value = self.configuration
@@ -71,6 +72,5 @@ class RuntimeConfiguration(Singleton):
                 value = None
                 break
 
-        if not value:
-            raise Exception(self.__class__.__name__, 'Incorrect key {} or value is not defined'.format(complex_key))
-        return value
+        return value or default_value
+
