@@ -1,10 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
 import socket
+import sys
+import time
 from abc import ABCMeta
 
 from cloudshell.layer_one.core.connection_handler import ConnectionHandler
+from cloudshell.layer_one.core.helper.runtime_configuration import RuntimeConfiguration
 
 
 class DriverListener(object):
@@ -21,6 +25,8 @@ class DriverListener(object):
         self._command_logger = command_logger
         self._xml_logger = xml_logger
         self._is_running = False
+
+        self._debug_mode = RuntimeConfiguration().read_key('DRIVER_MODE') == 'DEBUG'
 
     def _initialize_socket(self, host, port):
         """
@@ -44,6 +50,16 @@ class DriverListener(object):
     def set_running(self, is_running):
         self._is_running = is_running
 
+    def _wait_for_debugger_attach(self):
+        pid = str(os.getpid())
+
+        while not sys.gettrace():
+            self._command_logger.info(
+                "Waiting for a debugger to attach to this python driver process. (PID #{})".format(pid))
+            time.sleep(2)
+
+        self._command_logger.info("Debugger attached. (PID #{})".format(pid))
+
     def start_listening(self, host=None, port=None):
         """Initialize socket and start listening"""
         host = host if host else self.SERVER_HOST
@@ -56,4 +72,8 @@ class DriverListener(object):
             if connection is not None:
                 request_handler = ConnectionHandler(connection, self._command_executor, self._xml_logger,
                                                     self._command_logger)
-                request_handler.start()
+                if self._debug_mode:
+                    self._wait_for_debugger_attach()
+                    request_handler.run()
+                else:
+                    request_handler.start()
