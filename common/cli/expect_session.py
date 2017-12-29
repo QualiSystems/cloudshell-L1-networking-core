@@ -60,6 +60,10 @@ class ExpectSession(Session):
             self._logger = logging.getLogger(__name__)
         return self._logger
 
+    @logger.setter
+    def logger(self, value):
+        self._logger = value
+
     def get_username(self):
         return self._username
 
@@ -181,7 +185,7 @@ class ExpectSession(Session):
         if data_str is not None:
             self._clear_buffer(self._clear_buffer_timeout)
 
-            self.logger.debug('Command: {}'.format(data_str))
+            self.logger.info('Command: {}'.format(data_str))
             self.send_line(data_str)
 
         if re_string is None or len(re_string) == 0:
@@ -249,7 +253,7 @@ class ExpectSession(Session):
         result_output += self._clear_buffer(self._clear_buffer_timeout)
 
         result_output = normalize_buffer(result_output)
-        self.logger.debug(result_output)
+        self.logger.info(result_output)
         return result_output
 
     def reconnect(self, prompt):

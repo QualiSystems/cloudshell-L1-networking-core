@@ -20,13 +20,23 @@ class TCPSession(ExpectSession):
         if self._port is not None:
             self._port = int(self._port)
 
-    def connect(self, host, username, password, port=None, re_string=''):
+        self._command = None
+        self._error_map = None
+
+    def connect(self, host, username, password, command=None, error_map=None, port=None, re_string=''):
         """
             Connect to device
 
             :param expected_str: regular expression string
             :return:
         """
+
+        if self._command is None:
+            self._command = command
+
+        if self._error_map is None:
+            self._error_map = error_map
+
         ExpectSession.init(self, host, username, password, port)
 
         server_address = (self._host, self._port)
@@ -35,7 +45,8 @@ class TCPSession(ExpectSession):
         self._handler.connect(server_address)
 
         self._handler.settimeout(self._timeout)
-        output = self.hardware_expect(re_string=re_string)
+        self.hardware_expect(re_string=re_string)
+        output = self.hardware_expect(self._command, error_map=self._error_map, re_string=re_string)
 
         return output
 
@@ -43,7 +54,7 @@ class TCPSession(ExpectSession):
         self.disconnect()
         self._handler = self._init_handler()
 
-        return self.connect(self._host, self._username, self._password, self._port, re_string)
+        return self.connect(self._host, self._username, self._password, port=self._port, re_string=re_string)
 
     def disconnect(self):
         """
