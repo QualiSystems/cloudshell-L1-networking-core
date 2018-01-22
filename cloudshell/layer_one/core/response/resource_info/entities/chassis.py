@@ -13,7 +13,7 @@ class Chassis(ResourceInfo):
 
     def __init__(self, resource_id, address, model_name, serial_number):
         self._address = address
-        name = self.NAME_TEMPLATE.format(resource_id)
+        name = self.NAME_TEMPLATE.format(resource_id if len(str(resource_id)) > 1 else '0' + str(resource_id))
         family_name = self.FAMILY_NAME
         super(Chassis, self).__init__(resource_id, name, family_name, model_name, serial_number)
 

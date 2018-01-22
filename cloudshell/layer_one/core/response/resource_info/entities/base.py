@@ -8,7 +8,7 @@ class ResourceInfo(object):
     """
 
     def __init__(self, resource_id, name, family_name, model_name, serial_number, mapping=None):
-        self.resource_id = resource_id
+        self.resource_id = str(resource_id)
         self.name = name
         self.family_name = family_name
         self.model_name = model_name
@@ -36,9 +36,9 @@ class ResourceInfo(object):
         :return: 
         """
         if self._parent_resource and self._parent_resource.address:
-            address = '{0}/{1}'.format(self._parent_resource.address, str(self.resource_id))
+            address = '{0}/{1}'.format(self._parent_resource.address, self.resource_id)
         else:
-            address = str(self.resource_id)
+            address = self.resource_id
         return address
 
     def __str__(self):
