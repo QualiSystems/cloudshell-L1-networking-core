@@ -134,7 +134,10 @@ class RequestManager:
                                 command_logger.critical(tb)
                                 return_state = False
                                 command_logger.error(str(error_object))
-                                self._set_response_error(responses_node, '0', str(error_object))
+                                command_response_xs_prefix = XMLWrapper.get_node_prefix(command_response_node, 'xsi')
+                                command_log_node = XMLWrapper.get_child_node(command_response_node, 'Log', command_response_xs_prefix)
+                                XMLWrapper.set_node_text(command_log_node, str(error_object))
+                                # self._set_response_error(responses_node, '0', str(error_object))
 
                             XMLWrapper.set_node_attr(command_response_node, 'Success',
                                                      attr_value=str(return_state).lower())
