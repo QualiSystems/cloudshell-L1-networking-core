@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from cloudshell.layer_one.core.response.resource_info.entities.attributes import StringAttribute
 from cloudshell.layer_one.core.response.resource_info.entities.base import ResourceInfo
+from cloudshell.layer_one.core.response.resource_info.entities.validators import EntityValidator
 
 
 class Blade(ResourceInfo):
@@ -11,7 +12,7 @@ class Blade(ResourceInfo):
     MODEL_NAME = 'Generic L1 Module'
 
     def __init__(self, resource_id, model_name=MODEL_NAME, serial_number='NA'):
-        name = self.NAME_TEMPLATE.format(resource_id if len(str(resource_id)) > 1 else '0' + str(resource_id))
+        name = self.NAME_TEMPLATE.format(EntityValidator.validate_id_for_name_template(resource_id))
         super(Blade, self).__init__(resource_id, name, self.FAMILY_NAME, model_name, serial_number)
 
     def set_model_name(self, value):
