@@ -185,7 +185,7 @@ class ExpectSession(Session):
         if data_str is not None:
             self._clear_buffer(self._clear_buffer_timeout)
 
-            self.logger.info('Command: {}'.format(data_str))
+            self.logger.info('Command: {}'.format(data_str.replace(self._password, "*"*7)))
             self.send_line(data_str)
 
         if re_string is None or len(re_string) == 0:
@@ -253,7 +253,7 @@ class ExpectSession(Session):
         result_output += self._clear_buffer(self._clear_buffer_timeout)
 
         result_output = normalize_buffer(result_output)
-        self.logger.info(result_output)
+        self.logger.info(result_output.replace(self._password, "*"*7))
         return result_output
 
     def reconnect(self, prompt):

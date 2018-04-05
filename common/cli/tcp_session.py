@@ -23,7 +23,7 @@ class TCPSession(ExpectSession):
         self._command = None
         self._error_map = None
 
-    def connect(self, host, username, password, command=None, error_map=None, port=None, re_string=''):
+    def connect(self, host, username, password, command=None, error_map=None, action_map=None, port=None, re_string=''):
         """
             Connect to device
 
@@ -46,7 +46,10 @@ class TCPSession(ExpectSession):
 
         self._handler.settimeout(self._timeout)
         self.hardware_expect(re_string=re_string)
-        output = self.hardware_expect(self._command, error_map=self._error_map, re_string=re_string)
+        output = self.hardware_expect(self._command,
+                                      error_map=self._error_map,
+                                      expect_map=action_map,
+                                      re_string=re_string)
 
         return output
 

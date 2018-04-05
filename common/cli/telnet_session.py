@@ -5,6 +5,7 @@ import telnetlib
 from common.cli.expect_session import ExpectSession
 from collections import OrderedDict
 
+
 class TelnetSession(ExpectSession):
 
     def _init_handler(self):
@@ -12,15 +13,27 @@ class TelnetSession(ExpectSession):
 
     def __init__(self, *args, **kwargs):
         ExpectSession.__init__(self, self._init_handler(), *args, **kwargs)
+        self._command = None
+        self._error_map = None
 
-    def connect(self, host, username, password, port=None, re_string=''):
+    def connect(self, host, username, password, command=None, error_map=None, action_map=None, port=None, re_string=''):
         """
             Connect to device
 
             :param expected_str: regular expression string
             :return:
         """
-        ExpectSession.init(host, username, password, port)
+
+        if self._command is None:
+            self._command = command
+
+        if not self._command:
+            return
+
+        if self._error_map is None:
+            self._error_map = error_map
+
+        ExpectSession.init(self, host, username, password, port)
 
         self._handler.open(self._host, int(self._port), self._timeout)
         if self._handler.get_socket() is None:
@@ -30,7 +43,13 @@ class TelnetSession(ExpectSession):
         expect_map['[Ll]ogin:|[Uu]ser:'] = lambda: self.send_line(self._username)
         expect_map['[Pp]assword:'] = lambda: self.send_line(self._password)
 
-        output = self.hardware_expect(re_string=re_string, expect_map=expect_map)
+        self.hardware_expect(re_string=re_string)
+        output = self.hardware_expect(self._command,
+                                      error_map=self._error_map,
+                                      expect_map=action_map,
+                                      re_string=re_string)
+
+        # output = self.hardware_expect(re_string=re_string, expect_map=expect_map)
         self._logger.info(output)
 
         return output

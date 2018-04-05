@@ -31,7 +31,9 @@ class SSHSession(ExpectSession):
     def __del__(self):
         self.disconnect()
 
-    def connect(self, host, username, password, port=None, re_string='', look_for_keys=False):
+    def connect(self, host, username, password, command=None, error_map=None, action_map=None, port=None, re_string='', look_for_keys=False):
+
+    # def connect(self, host, username, password, port=None, re_string='', look_for_keys=False):
         """
             Connect to device through ssh
             :param re_string: regular expration of end of output
@@ -39,7 +41,7 @@ class SSHSession(ExpectSession):
         """
         ExpectSession.init(self, host, username, password, port)
 
-        s = "Host: {0}, port: {1}, username: {2}, password: {3}, timeout: {4}".format(self._host, self._port, self._username, self._password, self._timeout)
+        s = "Host: {0}, port: {1}, username: {2}, password: {3}, timeout: {4}".format(self._host, self._port, self._username, "*"*7, self._timeout)
         if self._logger:
             self._logger.info(s)
         # with open(r'c:\temp\ssh_connect.txt', 'a') as f:
@@ -51,7 +53,7 @@ class SSHSession(ExpectSession):
         self._current_channel = self._handler.invoke_shell()
         self._current_channel.settimeout(self._timeout)
 
-        output = self.hardware_expect(re_string=re_string, timeout=self._timeout)
+        output = self.hardware_expect(re_string=re_string, timeout=self._timeout, expect_map=action_map)
         if self._logger:
             self._logger.info(output)
 
