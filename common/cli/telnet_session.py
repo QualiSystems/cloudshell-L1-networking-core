@@ -35,7 +35,7 @@ class TelnetSession(ExpectSession):
         if not self._error_map:
             self._error_map = error_map or OrderedDict()
 
-        if action_map in None:
+        if action_map is None:
             action_map = OrderedDict()
 
         ExpectSession.init(self, host, username, password, port)
