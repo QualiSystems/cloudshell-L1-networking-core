@@ -1,9 +1,11 @@
-__author__ = 'g8y3e'
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 import telnetlib
 
-from common.cli.expect_session import ExpectSession
 from collections import OrderedDict
+
+from common.cli.expect_session import ExpectSession
 
 
 class TelnetSession(ExpectSession):
@@ -30,8 +32,11 @@ class TelnetSession(ExpectSession):
         if not self._command:
             return
 
-        if self._error_map is None:
-            self._error_map = error_map
+        if not self._error_map:
+            self._error_map = error_map or OrderedDict()
+
+        if action_map in None:
+            action_map = OrderedDict()
 
         ExpectSession.init(self, host, username, password, port)
 

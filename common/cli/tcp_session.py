@@ -1,8 +1,12 @@
-__author__ = 'g8y3e'
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 import socket
 
+from collections import OrderedDict
+
 from common.cli.expect_session import ExpectSession
+
 
 class TCPSession(ExpectSession):
     _DEFAULT_BUFFER = 512
@@ -34,8 +38,11 @@ class TCPSession(ExpectSession):
         if self._command is None:
             self._command = command
 
-        if self._error_map is None:
-            self._error_map = error_map
+        if not self._error_map:
+            self._error_map = error_map or OrderedDict()
+
+        if action_map in None:
+            action_map = OrderedDict()
 
         ExpectSession.init(self, host, username, password, port)
 

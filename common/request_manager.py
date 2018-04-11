@@ -88,10 +88,10 @@ class RequestManager:
                                                                                                  current_output)))
 
                 try:
-                    current_output = re.search(r"<Commands.*?</Commands>", current_output, re.DOTALL).group()
-                    xml_logger.info("START CLEAR REQUEST \n{}\nEND CLEAR REQUEST".format(re.sub(r"<Password>.*?</Password>",
-                                                                                                 self.PASSWORD_DISPLAY,
-                                                                                                 current_output)))
+                    # current_output = re.search(r"<Commands.*?</Commands>", current_output, re.DOTALL).group()
+                    # xml_logger.info("START CLEAR REQUEST \n{}\nEND CLEAR REQUEST".format(re.sub(r"<Password>.*?</Password>",
+                    #                                                                              self.PASSWORD_DISPLAY,
+                    #                                                                              current_output)))
                     request_node = XMLWrapper.parse_xml(current_output)
                     current_output = ''
                 except Exception as error_object:
