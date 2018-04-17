@@ -66,10 +66,10 @@ class RequestHandler:
         user_str = XMLWrapper.get_node_text(user_node)
         password_str = XMLWrapper.get_node_text(password_node)
 
-        response_node = None
-        if self._device_address != address_str or self._device_user != user_str or \
-                        self._device_password != password_str:
-            response_node = self._driver_handler.login(address_str, user_str, password_str, command_logger)
+        # response_node = None
+        # if self._device_address != address_str or self._device_user != user_str or \
+        #                 self._device_password != password_str:
+        response_node = self._driver_handler.login(address_str, user_str, password_str, command_logger)
 
         self._device_address = address_str
         self._device_user = user_str
