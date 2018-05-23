@@ -14,9 +14,12 @@ class NumericAttribute(Attribute):
     """
     Numeric attribute
     """
+    DEFAULT_VALUE = 0
 
     def __init__(self, name, value):
-        super(NumericAttribute, self).__init__(name, Attribute.NUMERIC, value or self.DEFAULT_VALUE)
+        if value is None:
+            value = self.DEFAULT_VALUE
+        super(NumericAttribute, self).__init__(name, Attribute.NUMERIC, value)
 
 
 class BooleanAttribute(Attribute):
