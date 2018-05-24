@@ -19,7 +19,7 @@ class NumericAttribute(Attribute):
     def __init__(self, name, value):
         if value is None:
             value = self.DEFAULT_VALUE
-        super(NumericAttribute, self).__init__(name, Attribute.NUMERIC, value)
+        super(NumericAttribute, self).__init__(name, Attribute.NUMERIC, str(value))
 
 
 class BooleanAttribute(Attribute):
