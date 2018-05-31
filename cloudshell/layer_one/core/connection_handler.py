@@ -17,6 +17,7 @@ class ConnectionHandler(Thread):
     """
     REQUEST_END = r'</Commands>'
     END_COMMAND = '\r\n'
+    READ_TIMEOUT = 30
 
     def __init__(self, connection_socket, command_executor, xml_logger, logger, buffer_size=2048):
         """
@@ -46,6 +47,10 @@ class ConnectionHandler(Thread):
             except ConnectionClosedException:
                 self._logger.debug('Connection closed')
                 break
+            except socket.timeout:
+                self._connection_socket.close()
+                self._logger.debug('Connection closed by timeout')
+                break
             except Exception as ex:
                 self._send_response(
                     CommandResponsesBuilder.to_string(CommandResponsesBuilder.build_xml_error(0, ex.message)))
@@ -59,18 +64,17 @@ class ConnectionHandler(Thread):
         Read data from socket
         :return: 
         """
+        self._connection_socket.settimeout(self.READ_TIMEOUT)
         data = ''
         while True:
-            try:
-                input_buffer = self._connection_socket.recv(self._buffer_size)
-                if not input_buffer:
-                    raise ConnectionClosedException()
-                else:
-                    data += input_buffer.strip()
-                    if re.search(self.REQUEST_END, data):
-                        break
-            except socket.timeout:
-                continue
+            input_buffer = self._connection_socket.recv(self._buffer_size)
+            if not input_buffer:
+                raise ConnectionClosedException()
+            else:
+                data += input_buffer.strip()
+                if re.search(self.REQUEST_END, data):
+                    break
+
         return data
 
     def _read_request_commands(self):
