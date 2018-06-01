@@ -76,9 +76,10 @@ class DriverListener(object):
                 if self._debug_mode:
                     self._wait_for_debugger_attach()
                     try:
-                        request_handler.start()
-                        self._command_logger.debug("Threads count: {}".format(threading.activeCount()))
+                        request_handler.run()
                     except:
                         self._command_logger.debug('ConnectionHandler Error')
                 else:
                     request_handler.start()
+                    self._command_logger.debug("Threads count: {}".format(threading.activeCount()))
+
