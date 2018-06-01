@@ -45,6 +45,7 @@ class ConnectionHandler(Thread):
                 self._send_response(
                     CommandResponsesBuilder.to_string(CommandResponsesBuilder.build_xml_result(responses)))
             except ConnectionClosedException:
+                self._connection_socket.close()
                 self._logger.debug('Connection closed')
                 break
             except socket.timeout:
