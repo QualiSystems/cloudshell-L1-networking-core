@@ -1,8 +1,10 @@
 import os
+import re
 
 
 class XMLLogger(object):
     """Simple logger used for xml"""
+    PASSWORD_DISPLAY = "Password>*******</"
 
     def __init__(self, path):
         try:
@@ -19,4 +21,7 @@ class XMLLogger(object):
         self._descriptor.flush()
 
     def info(self, data):
-        self._write_data(data)
+        self._write_data(self._prepare_output(data))
+
+    def _prepare_output(self, data):
+        return re.sub(r"Password>.*?</", self.PASSWORD_DISPLAY, data)
