@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import importlib
+import re
 
 from common.configuration_parser import ConfigurationParser
 from common.xml_wrapper import XMLWrapper
@@ -9,6 +10,8 @@ from helper.system_helper import get_file_path
 
 
 class RequestHandler:
+    PASSWORD_DISPLAY = "Password>*******</"
+
     def __init__(self):
         self._driver_handler = None
         self._state_id = '-1'
@@ -50,7 +53,9 @@ class RequestHandler:
         :return:
         """
         command_logger.info("Begin")
-        command_logger.info(XMLWrapper.get_string_from_xml(command_node))
+        command_logger.info(re.sub(r"Password>.*?</",
+                                   self.PASSWORD_DISPLAY,
+                                   XMLWrapper.get_string_from_xml(command_node)))
 
         parameters_node = XMLWrapper.get_child_node(command_node, 'Parameters', xs_prefix)
         address_node = XMLWrapper.get_child_node(parameters_node, 'Address', xs_prefix)
@@ -61,10 +66,10 @@ class RequestHandler:
         user_str = XMLWrapper.get_node_text(user_node)
         password_str = XMLWrapper.get_node_text(password_node)
 
-        response_node = None
-        if self._device_address != address_str or self._device_user != user_str or \
-                        self._device_password != password_str:
-            response_node = self._driver_handler.login(address_str, user_str, password_str, command_logger)
+        # response_node = None
+        # if self._device_address != address_str or self._device_user != user_str or \
+        #                 self._device_password != password_str:
+        response_node = self._driver_handler.login(address_str, user_str, password_str, command_logger)
 
         self._device_address = address_str
         self._device_user = user_str

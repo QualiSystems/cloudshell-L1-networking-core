@@ -13,6 +13,8 @@ from configuration_parser import ConfigurationParser
 
 
 class RequestManager:
+    PASSWORD_DISPLAY = "<Password>*******</Password>"
+
     def __init__(self, buffer_size=2048):
         self._buffer_size = buffer_size
         self._connection_socket = None
@@ -81,19 +83,27 @@ class RequestManager:
                 responses_node = XMLWrapper.parse_xml(self._responses_data)
                 # temp = current_output.replace('\r', '') + "\n\n"
                 # xml_logger.info(current_output.replace('\r', '') + "\n\n")
+                xml_logger.info("START INCOMING REQUEST\n{}\nEND INCOMING REQUEST".format(re.sub(r"<Password>.*?</Password>",
+                                                                                                 self.PASSWORD_DISPLAY,
+                                                                                                 current_output)))
 
                 try:
-
+                    # current_output = re.search(r"<Commands.*?</Commands>", current_output, re.DOTALL).group()
+                    # xml_logger.info("START CLEAR REQUEST \n{}\nEND CLEAR REQUEST".format(re.sub(r"<Password>.*?</Password>",
+                    #                                                                              self.PASSWORD_DISPLAY,
+                    #                                                                              current_output)))
                     request_node = XMLWrapper.parse_xml(current_output)
                     current_output = ''
                 except Exception as error_object:
-                    tb = traceback.format_exc()
-                    command_logger.critical(tb)
+                    # tb = traceback.format_exc()
+                    # command_logger.critical(tb)
+                    command_logger.exception(error_object)
                     responses_node = self._set_response_error(responses_node, '0',
                                                               'Failed to parse the xml')
 
                     responses_str = XMLWrapper.get_string_from_xml(responses_node)
-                    xml_logger.info(responses_str.replace('\r', '') + "\n\n")
+                    xml_logger.info("START ERROR RESPONSE\n{}\nEND ERROR RESPONSE".format(responses_str))
+                    # xml_logger.info(responses_str.replace('\r', '') + "\n\n")
                     self._connection_socket.send(responses_str + self._end_command)
 
                     current_output = ''
@@ -165,5 +175,6 @@ class RequestManager:
                             responses_node = self._set_response_error(responses_node, '404',
                                                                       'Command not found!')
                 responce_str = XMLWrapper.get_string_from_xml(responses_node)
-                xml_logger.info(responce_str.replace('\r', '') + "\n")
+                # xml_logger.info(responce_str.replace('\r', '') + "\n")
+                xml_logger.info("START RESPONSE\n{}\nEND RESPONSE".format(responce_str))
                 self._connection_socket.send(responce_str + self._end_command)
