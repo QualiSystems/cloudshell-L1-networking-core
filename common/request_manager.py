@@ -14,13 +14,16 @@ from configuration_parser import ConfigurationParser
 
 class RequestManager:
     PASSWORD_DISPLAY = "<Password>*******</Password>"
+    SOCKET_TIMEOUT = 30
 
     def __init__(self, buffer_size=2048):
         self._buffer_size = buffer_size
         self._connection_socket = None
         self._request_handler = None
 
-        self._server_socket_timeout = ConfigurationParser.get("common_variable", "server_timeout")
+        self._server_socket_timeout = ConfigurationParser.get("common_variable",
+                                                              "server_timeout") or self.SOCKET_TIMEOUT
+
         self._commands_dict = dict()
 
         self._re_command_end = r'</Commands>'
@@ -66,13 +69,15 @@ class RequestManager:
         while True:
             try:
                 input_buffer = self._connection_socket.recv(self._buffer_size)
+                if not input_buffer:
+                    self._connection_socket.close()
+                    raise Exception(self.__class__.__name__, 'Session closed by client')
                 current_output += input_buffer.strip()
-                if not current_output:
-                    time.sleep(0.2)
-                    continue
-                #command_logger.debug('GOT: {}'.format(current_output))
+                # command_logger.debug('GOT: {}'.format(current_output))
             except socket.timeout:
-                continue
+                self._connection_socket.close()
+                raise
+
             except Exception as error_object:
                 tb = traceback.format_exc()
                 command_logger.critical(tb)
@@ -83,9 +88,10 @@ class RequestManager:
                 responses_node = XMLWrapper.parse_xml(self._responses_data)
                 # temp = current_output.replace('\r', '') + "\n\n"
                 # xml_logger.info(current_output.replace('\r', '') + "\n\n")
-                xml_logger.info("START INCOMING REQUEST\n{}\nEND INCOMING REQUEST".format(re.sub(r"<Password>.*?</Password>",
-                                                                                                 self.PASSWORD_DISPLAY,
-                                                                                                 current_output)))
+                xml_logger.info(
+                    "START INCOMING REQUEST\n{}\nEND INCOMING REQUEST".format(re.sub(r"<Password>.*?</Password>",
+                                                                                     self.PASSWORD_DISPLAY,
+                                                                                     current_output)))
 
                 try:
                     # current_output = re.search(r"<Commands.*?</Commands>", current_output, re.DOTALL).group()
@@ -118,11 +124,12 @@ class RequestManager:
 
                     if command_name is not None:
                         command_name_lower = command_name.lower()
-                        command_logger.info('\n\n----------------------------\nGot command {0}\n>>>\n'.format(command_name ))
+                        command_logger.info(
+                            '\n\n----------------------------\nGot command {0}\n>>>\n'.format(command_name))
                         if not command_name_lower in self._commands_dict:
                             command_logger.info('{} Not implemented, skip'.format(command_name))
                         if command_name_lower in self._commands_dict:
-                            command_logger.info('Start command {0}'.format(command_name_lower ))
+                            command_logger.info('Start command {0}'.format(command_name_lower))
                             callback_tuple = self._commands_dict[command_name_lower]
 
                             command_response_node = XMLWrapper.parse_xml(self._command_response_data)
@@ -131,7 +138,7 @@ class RequestManager:
                             XMLWrapper.set_node_attr(command_response_node, 'CommandId', attr_value=command_id)
 
                             timestamp_node = XMLWrapper.get_child_node(command_response_node, 'Timestamp')
-                            #dd.mm.yyyy hh:mm:ss  , time.gmtime()
+                            # dd.mm.yyyy hh:mm:ss  , time.gmtime()
                             XMLWrapper.set_node_text(timestamp_node, datetime.now().strftime("%d.%m.%Y %H:%M:%S"))
 
                             return_state = True
@@ -145,7 +152,8 @@ class RequestManager:
                                 return_state = False
                                 command_logger.error(str(error_object))
                                 command_response_xs_prefix = XMLWrapper.get_node_prefix(command_response_node, 'xsi')
-                                command_log_node = XMLWrapper.get_child_node(command_response_node, 'Log', command_response_xs_prefix)
+                                command_log_node = XMLWrapper.get_child_node(command_response_node, 'Log',
+                                                                             command_response_xs_prefix)
                                 XMLWrapper.set_node_text(command_log_node, str(error_object))
                                 # self._set_response_error(responses_node, '0', str(error_object))
 
@@ -159,16 +167,17 @@ class RequestManager:
                                 # exception for method GetStateID
                                 if command_name_lower == 'getstateid':
                                     attr_prefix = 'http://www.w3.org/2001/XMLSchema-instance'
-                                    #XMLWrapper.set_node_attr(responses_info_node, 'xmlns:xsi', attr_value=attr_prefix)
+                                    # XMLWrapper.set_node_attr(responses_info_node, 'xmlns:xsi', attr_value=attr_prefix)
                                     XMLWrapper.set_node_attr(responses_info_node, 'type',
-                                                             '{' + attr_prefix + '}', attr_value ='StateInfo')
+                                                             '{' + attr_prefix + '}', attr_value='StateInfo')
 
                                 # exception for method GetAttributeValue
                                 if command_name_lower == 'getattributevalue':
                                     attr_prefix = 'http://www.w3.org/2001/XMLSchema-instance'
-                                    #XMLWrapper.set_node_attr(responses_info_node, 'xmlns:xsi', attr_value=attr_prefix)
+                                    # XMLWrapper.set_node_attr(responses_info_node, 'xmlns:xsi', attr_value=attr_prefix)
                                     XMLWrapper.set_node_attr(responses_info_node, 'type',
-                                                             '{' + attr_prefix + '}', attr_value ='AttributeInfoResponse')
+                                                             '{' + attr_prefix + '}',
+                                                             attr_value='AttributeInfoResponse')
 
                             XMLWrapper.append_child(responses_node, command_response_node)
                         else:
