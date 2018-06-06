@@ -46,7 +46,7 @@ class ConnectionHandler(Thread):
                     CommandResponsesBuilder.to_string(CommandResponsesBuilder.build_xml_result(responses)))
             except ConnectionClosedException:
                 self._connection_socket.close()
-                self._logger.debug('Connection closed')
+                self._logger.debug('Connection closed by remote host')
                 break
             except socket.timeout:
                 self._connection_socket.close()
@@ -58,7 +58,7 @@ class ConnectionHandler(Thread):
                 tb = traceback.format_exc()
                 self._logger.critical(tb)
                 self._connection_socket.close()
-                raise
+                break
 
     def _read_socket(self):
         """
