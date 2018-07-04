@@ -1,25 +1,39 @@
-from setuptools import setup, find_packages
-import os
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from distutils.core import setup, find_packages
 
-with open(os.path.join('version.txt')) as version_file:
-    version_from_file = version_file.read().strip()
 
-with open('requirements.txt') as f_required:
-    required = f_required.read().splitlines()
+def get_file_content(file_name):
+    with open(file_name) as f:
+        return f.read().strip()
 
-with open('test_requirements.txt') as f_tests:
-    required_for_tests = f_tests.read().splitlines()
 
 setup(
     name='cloudshell-l1-networking-core',
-    url='http://www.qualisystems.com/',
+    version=get_file_content('version.txt'),
+    description='QualiSystems CloudShell L1 networking core package',
     author='QualiSystems',
     author_email='info@qualisystems.com',
-    packages=find_packages(),
-    install_requires=required,
-    tests_require=required_for_tests,
-    version=version_from_file,
-    package_data={'': ['*.txt']},
-    description='QualiSystems CloudShell L1 networking core package',
-    include_package_data=True
+    url='https://github.com/QualiSystems/cloudshell-l1-networking-core',
+    packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    package_data={'core': ['data/*.yml', 'data/*.json', '*.txt']},
+    entry_points={
+        "console_scripts": ['build_driver = cloudshell.layer_one.tools.build_driver:build']
+    },
+    include_package_data=True,
+    install_requires=get_file_content('requirements.txt'),
+    license="Apache Software License 2.0",
+    zip_safe=False,
+    keywords='core cloudshell quali layer-one',
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Programming Language :: Python :: 2.7",
+        "Topic :: Software Development :: Libraries",
+        "License :: OSI Approved :: Apache Software License",
+    ],
+    test_suite='tests',
+    tests_require=get_file_content('test_requirements.txt')
 )
