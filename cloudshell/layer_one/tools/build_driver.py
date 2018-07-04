@@ -1,9 +1,8 @@
 import os
 import re
+import subprocess
 import sys
 import zipfile
-
-import pip
 
 DEFAULT_DRIVER_FILES = [
     'datamodel',
@@ -35,7 +34,8 @@ def _append_files(path, zip_file):
 
 
 def download_packages(packages_path, requirements):
-    pip.main(['download', '-r', requirements, '-d', packages_path, '-q'])
+    subprocess.call(['pip', 'download', '-r', requirements, '-d', packages_path, '-q'])
+    # pip.main(['download', '-r', requirements, '-d', packages_path, '-q'])
 
 
 def _print_help():
