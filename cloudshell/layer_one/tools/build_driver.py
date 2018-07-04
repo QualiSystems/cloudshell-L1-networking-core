@@ -35,7 +35,6 @@ def _append_files(path, zip_file):
 
 def download_packages(packages_path, requirements):
     subprocess.call(['pip', 'download', '-r', requirements, '-d', packages_path, '-q'])
-    # pip.main(['download', '-r', requirements, '-d', packages_path, '-q'])
 
 
 def _print_help():
@@ -69,6 +68,7 @@ def build(args=None):
         DEFAULT_DRIVER_FILES.append(driver_src_name)
     else:
         print('Cannot find driver src folder {}'.format(driver_src_name))
+        sys.exit(1)
     driver_folder_name_ver = '{}-{}'.format(driver_folder_name, version)
     dist_path = os.path.join(driver_path, 'dist')
     driver_zip_path = os.path.join(dist_path, driver_folder_name_ver + '.zip')
