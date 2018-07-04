@@ -1,23 +1,23 @@
 import os
+import re
+import sys
 import zipfile
 
 import pip
 
 DEFAULT_DRIVER_FILES = [
     'datamodel',
-    'netscout_teststream',
     'main.py',
     'install_driver.bat',
     'driver_exe_template',
     'requirements.txt',
-    'version.txt',
-    'packages'
+    'version.txt'
 ]
 
 
-def zip_driver(driver_path, driver_zip_file):
+def zip_driver(driver_path, driver_zip_file, files):
     with zipfile.ZipFile(driver_zip_file, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-        for name in DEFAULT_DRIVER_FILES:
+        for name in files:
             _append_files(os.path.join(driver_path, name), zip_file)
 
 
@@ -38,29 +38,55 @@ def download_packages(packages_path, requirements):
     pip.main(['download', '-r', requirements, '-d', packages_path, '-q'])
 
 
-def build():
+def _print_help():
+    message = """Usage: build_driver [OPTIONS]
+
+Options:
+    -h, --help  Show this message and exit.
+    -i, --ignore-packages  Do not collect driver dependencies
+    """
+    print(message)
+
+
+def build(args=None):
+    if not args:
+        args = sys.argv
+
+    if '--help' in args[1:] or '-h' in args[1:]:
+        _print_help()
+        sys.exit(0)
+
     # driver_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
     driver_path = os.getcwd()
+
     with open(os.path.join(driver_path, 'version.txt')) as ver_file:
         version = ver_file.read().strip()
 
     driver_folder_name = os.path.basename(driver_path)
+    driver_src_name = re.sub('cloudshell-L1-', '', driver_folder_name, flags=re.IGNORECASE)
+    driver_src_name = re.sub('-', '_', driver_src_name)
+    if os.path.exists(driver_src_name):
+        DEFAULT_DRIVER_FILES.append(driver_src_name)
+    else:
+        print('Cannot find driver src folder {}'.format(driver_src_name))
     driver_folder_name_ver = '{}-{}'.format(driver_folder_name, version)
     dist_path = os.path.join(driver_path, 'dist')
     driver_zip_path = os.path.join(dist_path, driver_folder_name_ver + '.zip')
 
-    packages_path = os.path.join(driver_path, 'packages')
-    requirements_path = os.path.join(driver_path, 'requirements.txt')
-
     if not os.path.exists(dist_path):
         os.mkdir(dist_path)
 
-    if not os.path.exists(packages_path):
-        os.mkdir(packages_path)
+    if '--ignore-packages' not in args[1:] and '-i' not in args[1:]:
+        packages_path = os.path.join(driver_path, 'packages')
+        requirements_path = os.path.join(driver_path, 'requirements.txt')
 
-    download_packages(packages_path, requirements_path)
+        if not os.path.exists(packages_path):
+            os.mkdir(packages_path)
 
-    zip_driver(driver_path, driver_zip_path)
+        download_packages(packages_path, requirements_path)
+        DEFAULT_DRIVER_FILES.append('packages')
+
+    zip_driver(driver_path, driver_zip_path, DEFAULT_DRIVER_FILES)
 
 
 if __name__ == '__main__':
