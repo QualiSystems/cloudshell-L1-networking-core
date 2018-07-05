@@ -22,14 +22,14 @@ def zip_driver(driver_path, driver_zip_file, files):
 
 def _append_files(path, zip_file):
     if os.path.isfile(path):
-        rel_path = os.path.relpath(path, os.path.join(path, os.path.pardir))
+        rel_path = os.path.relpath(path, os.path.join(path, os.path.pardir, os.path.pardir))
         zip_file.write(path, rel_path)
     else:
         for root, dirs, files in os.walk(path):
             for file_or_dir in files + dirs:
                 if not file_or_dir.endswith('.pyc'):
                     full_path = os.path.join(root, file_or_dir)
-                    rel_path = os.path.relpath(full_path, os.path.join(path, os.path.pardir))
+                    rel_path = os.path.relpath(full_path, os.path.join(path, os.path.pardir, os.path.pardir))
                     zip_file.write(full_path, rel_path)
 
 
@@ -62,12 +62,12 @@ def build(args=None):
         version = ver_file.read().strip()
 
     driver_folder_name = os.path.basename(driver_path)
-    driver_src_name = re.sub('cloudshell-L1-', '', driver_folder_name, flags=re.IGNORECASE)
-    driver_src_name = re.sub('-', '_', driver_src_name)
-    if os.path.exists(driver_src_name):
-        DEFAULT_DRIVER_FILES.append(driver_src_name)
+    driver_name = re.sub('cloudshell-L1-', '', driver_folder_name, flags=re.IGNORECASE)
+    driver_name = re.sub('-', '_', driver_name)
+    if os.path.exists(os.path.join(driver_path, driver_name)):
+        DEFAULT_DRIVER_FILES.append(driver_name)
     else:
-        print('Cannot find driver src folder {}'.format(driver_src_name))
+        print('Cannot find driver src folder {}'.format(driver_name))
         sys.exit(1)
     driver_folder_name_ver = '{}-{}'.format(driver_folder_name, version)
     dist_path = os.path.join(driver_path, 'dist')
