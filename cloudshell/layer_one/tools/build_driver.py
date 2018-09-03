@@ -10,7 +10,8 @@ DEFAULT_DRIVER_FILES = [
     'install_driver.bat',
     'driver_exe_template',
     'requirements.txt',
-    'version.txt'
+    'version.txt',
+    'INSTALL.txt'
 ]
 
 
