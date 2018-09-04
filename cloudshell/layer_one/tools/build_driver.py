@@ -70,6 +70,14 @@ def build(args=None):
     else:
         print('Cannot find driver src folder {}'.format(driver_name))
         sys.exit(1)
+        
+    runtime_config = driver_name + '_runtime_config.yml'
+    if os.path.exists(os.path.join(driver_path, runtime_config)):
+        DEFAULT_DRIVER_FILES.append(runtime_config)
+    else:
+        print('Cannot find driver runtime config {}'.format(runtime_config))
+        sys.exit(1)
+
     driver_folder_name_ver = '{}-{}'.format(driver_folder_name, version)
     dist_path = os.path.join(driver_path, 'dist')
     driver_zip_path = os.path.join(dist_path, driver_folder_name_ver + '.zip')
