@@ -70,7 +70,7 @@ def build(args=None):
     else:
         print('Cannot find driver src folder {}'.format(driver_name))
         sys.exit(1)
-        
+
     runtime_config = driver_name + '_runtime_config.yml'
     if os.path.exists(os.path.join(driver_path, runtime_config)):
         DEFAULT_DRIVER_FILES.append(runtime_config)
