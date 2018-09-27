@@ -1,4 +1,5 @@
 import os
+import re
 
 from yaml import load
 
@@ -18,21 +19,10 @@ class RuntimeConfiguration(Singleton):
     """
     Runtime configuration helper
     """
-    DEFAULT_CONFIGURATION = {
-        'CLI': {
-            'TYPE': ['SSH',
-                     'TELNET'],
-            'PORTS': {
-                'SSH': 22,
-                'TELNET': 23
-            }
-        },
-        'LOGGING': {
-            'LEVEL': 'INFO'
-        }
-    }
+    KEY_SEPARATOR_LIST = ['\.', '\:', '\/']
 
     def __init__(self, config_path=None):
+        self._key_separator_pattern = r'|'.join(self.KEY_SEPARATOR_LIST)
         if not hasattr(self, '_configuration'):
             self._configuration = self._read_configuration(config_path)
 
@@ -49,13 +39,7 @@ class RuntimeConfiguration(Singleton):
         """Read configuration from file if exists or use default"""
         if config_path and os.path.isfile(config_path) and os.access(config_path, os.R_OK):
             with open(config_path, 'r') as config:
-                loaded_configuration = load(config)
-                return self._merge_configs(self.DEFAULT_CONFIGURATION, loaded_configuration)
-        else:
-            return self.DEFAULT_CONFIGURATION
-
-    def _merge_configs(self, config_a, config_b):
-        return config_b
+                return load(config)
 
     def read_key(self, complex_key, default_value=None):
         """
@@ -65,7 +49,7 @@ class RuntimeConfiguration(Singleton):
         :return:
         """
         value = self.configuration
-        for key in complex_key.split('.'):
+        for key in re.split(self._key_separator_pattern, complex_key):
             if isinstance(value, dict):
                 value = value.get(key)
             else:
@@ -73,4 +57,3 @@ class RuntimeConfiguration(Singleton):
                 break
 
         return value or default_value
-
