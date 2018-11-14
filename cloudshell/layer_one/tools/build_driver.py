@@ -4,6 +4,8 @@ import subprocess
 import sys
 import zipfile
 
+EXTRA_FILES_PATH = 'extra_files.txt'
+
 DEFAULT_DRIVER_FILES = [
     'datamodel',
     'main.py',
@@ -11,7 +13,8 @@ DEFAULT_DRIVER_FILES = [
     'driver_exe_template',
     'requirements.txt',
     'version.txt',
-    'INSTALL.txt'
+    'INSTALL.txt',
+    EXTRA_FILES_PATH
 ]
 
 
@@ -62,18 +65,24 @@ def build(args=None):
     with open(os.path.join(driver_path, 'version.txt')) as ver_file:
         version = ver_file.read().strip()
 
+    file_list = []
+    if os.path.exists(EXTRA_FILES_PATH):
+        with open(EXTRA_FILES_PATH, 'r') as driver_files:
+            file_list.extend(driver_files.readlines())
+    file_list.extend(DEFAULT_DRIVER_FILES)
+
     driver_folder_name = os.path.basename(driver_path)
     driver_name = re.sub('cloudshell-L1-', '', driver_folder_name, flags=re.IGNORECASE)
     driver_name = re.sub('-', '_', driver_name)
     if os.path.exists(os.path.join(driver_path, driver_name)):
-        DEFAULT_DRIVER_FILES.append(driver_name)
+        file_list.append(driver_name)
     else:
         print('Cannot find driver src folder {}'.format(driver_name))
         sys.exit(1)
 
     runtime_config = driver_name + '_runtime_config.yml'
     if os.path.exists(os.path.join(driver_path, runtime_config)):
-        DEFAULT_DRIVER_FILES.append(runtime_config)
+        file_list.append(runtime_config)
     else:
         print('Cannot find driver runtime config {}'.format(runtime_config))
         sys.exit(1)
@@ -93,9 +102,9 @@ def build(args=None):
             os.mkdir(packages_path)
 
         download_packages(packages_path, requirements_path)
-        DEFAULT_DRIVER_FILES.append('packages')
+        file_list.append('packages')
 
-    zip_driver(driver_path, driver_zip_path, DEFAULT_DRIVER_FILES)
+    zip_driver(driver_path, driver_zip_path, set(file_list))
 
 
 if __name__ == '__main__':
