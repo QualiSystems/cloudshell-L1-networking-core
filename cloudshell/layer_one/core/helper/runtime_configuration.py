@@ -53,7 +53,6 @@ class RuntimeConfiguration(Singleton):
             if isinstance(value, dict):
                 value = value.get(key)
             else:
-                value = None
-                break
+                return default_value
 
-        return value or default_value
+        return value if value is not None else default_value

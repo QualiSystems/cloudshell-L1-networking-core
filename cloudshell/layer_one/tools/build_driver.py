@@ -4,18 +4,19 @@ import subprocess
 import sys
 import zipfile
 
-EXTRA_FILES_PATH = 'extra_files.txt'
+from cloudshell.layer_one.core.helper.runtime_configuration import RuntimeConfiguration
 
-DEFAULT_DRIVER_FILES = [
+CONFIG_FILE = 'package_config.yml'
+PACKAGE_FILES_KEY = 'PACKAGE_FILES'
+COLLECT_DEPENDENCIES_KEY = 'COLLECT_DEPENDENCIES'
+DEFAULT_FILES = [
     'datamodel',
     'main.py',
     'install_driver.bat',
     'driver_exe_template',
     'requirements.txt',
     'version.txt',
-    'INSTALL.txt',
-    EXTRA_FILES_PATH
-]
+    'INSTALL.txt']
 
 
 def zip_driver(driver_path, driver_zip_file, files):
@@ -60,16 +61,16 @@ def build(args=None):
         sys.exit(0)
 
     # driver_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+    # driver_path = '/Users/yar/Projects/Quali/Github/LayerOne/cloudshell-L1-rome'
     driver_path = os.getcwd()
 
     with open(os.path.join(driver_path, 'version.txt')) as ver_file:
         version = ver_file.read().strip()
 
-    file_list = []
-    if os.path.exists(EXTRA_FILES_PATH):
-        with open(EXTRA_FILES_PATH, 'r') as driver_files:
-            file_list.extend(driver_files.readlines())
-    file_list.extend(DEFAULT_DRIVER_FILES)
+    config = RuntimeConfiguration(os.path.join(driver_path, CONFIG_FILE))
+
+    file_list = config.read_key(PACKAGE_FILES_KEY, [])
+    file_list.extend(DEFAULT_FILES)
 
     driver_folder_name = os.path.basename(driver_path)
     driver_name = re.sub('cloudshell-L1-', '', driver_folder_name, flags=re.IGNORECASE)
@@ -94,7 +95,7 @@ def build(args=None):
     if not os.path.exists(dist_path):
         os.mkdir(dist_path)
 
-    if '--ignore-packages' not in args[1:] and '-i' not in args[1:]:
+    if '--ignore-packages' not in args[1:] and '-i' not in args[1:] and config.read_key(COLLECT_DEPENDENCIES_KEY, True):
         packages_path = os.path.join(driver_path, 'packages')
         requirements_path = os.path.join(driver_path, 'requirements.txt')
 
