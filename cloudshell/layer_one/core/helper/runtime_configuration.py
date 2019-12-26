@@ -1,7 +1,7 @@
 import os
 import re
 
-from yaml import load
+from yaml import load, Loader
 
 _instance = None
 
@@ -39,7 +39,7 @@ class RuntimeConfiguration(Singleton):
         """Read configuration from file if exists or use default"""
         if config_path and os.path.isfile(config_path) and os.access(config_path, os.R_OK):
             with open(config_path, 'r') as config:
-                return load(config)
+                return load(config, Loader=Loader)
 
     def read_key(self, complex_key, default_value=None):
         """

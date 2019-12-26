@@ -17,9 +17,10 @@ class DriverListener(object):
     Listen for new connection
     """
     __metaclass__ = ABCMeta
-    BACKLOG = 100
+    BACKLOG = 10
     SERVER_HOST = '0.0.0.0'
     SERVER_PORT = 1024
+    SOCKET_TIMEOUT = 900
 
     def __init__(self, command_executor, xml_logger, command_logger):
         self._command_executor = command_executor
@@ -39,6 +40,7 @@ class DriverListener(object):
         self._command_logger.debug('New socket created')
         try:
             server_socket.bind((host, int(port)))
+            server_socket.settimeout(self.SOCKET_TIMEOUT)
             server_socket.listen(self.BACKLOG)
         except Exception as ex:
             # log will be  here
@@ -68,7 +70,12 @@ class DriverListener(object):
         print "Listen address {0}:{1}".format(host, port)
         server_socket = self._initialize_socket(host, port)
         while self._is_running:
-            connection, connection_data = server_socket.accept()
+            try:
+                connection, connection_data = server_socket.accept()
+            except socket.timeout:
+                map(lambda th: isinstance(th, ConnectionHandler) and th.join(), threading.enumerate())
+                self._command_logger.debug("Terminating by idle timeout")
+                break
             self._command_logger.debug("New connection from {0}:{1}".format(connection_data[0], connection_data[1]))
             if connection is not None:
                 request_handler = ConnectionHandler(connection, self._command_executor, self._xml_logger,
