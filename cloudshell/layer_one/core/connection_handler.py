@@ -72,7 +72,9 @@ class ConnectionHandler(Thread):
             if not input_buffer:
                 raise ConnectionClosedException()
             else:
-                data += input_buffer.strip()
+                # removed input_buffer.strip(), fixes
+                # https://github.com/QualiSystems/cloudshell-L1-networking-core/issues/25
+                data += input_buffer
                 if re.search(self.REQUEST_END, data):
                     break
 
