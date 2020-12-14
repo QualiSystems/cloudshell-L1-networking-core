@@ -12,7 +12,7 @@ class ResourceInfo(object):
         self.name = name
         self.family_name = family_name
         self.model_name = model_name
-        self.serial_number = serial_number
+        self.serial_number = serial_number or 'NA'
 
         self.child_resources = {}
         self.attributes = []
