@@ -11,7 +11,7 @@ class Blade(ResourceInfo):
     FAMILY_NAME = 'L1 Switch Blade'
     MODEL_NAME = 'Generic L1 Module'
 
-    def __init__(self, resource_id, model_name=None, serial_number='NA'):
+    def __init__(self, resource_id, model_name=None, serial_number=None):
         model_name = model_name or self.MODEL_NAME
         name = self.NAME_TEMPLATE.format(EntityValidator.validate_id_for_name_template(resource_id))
         super(Blade, self).__init__(resource_id, name, self.FAMILY_NAME, model_name, serial_number)
