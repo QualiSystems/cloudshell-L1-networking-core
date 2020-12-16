@@ -11,19 +11,23 @@ def full_path(relative_path):
 
 
 class ResourceInfoBuilder(object):
-    """
-    Build resource info node
-    """
-    RESOURCE_TEMPLATE = XMLHelper.read_template(full_path('templates/resource_template.xml'))
-    ATTRIBUTE_TEMPLATE = XMLHelper.read_template(full_path('templates/resource_attribute_template.xml'))
-    MAPPING_TEMPLATE = XMLHelper.read_template(full_path('templates/resource_incoming_map_template.xml'))
+    """Build resource info node."""
+
+    RESOURCE_TEMPLATE = XMLHelper.read_template(
+        full_path("templates/resource_template.xml")
+    )
+    ATTRIBUTE_TEMPLATE = XMLHelper.read_template(
+        full_path("templates/resource_attribute_template.xml")
+    )
+    MAPPING_TEMPLATE = XMLHelper.read_template(
+        full_path("templates/resource_incoming_map_template.xml")
+    )
 
     @staticmethod
     def _build_resource_node(resource_info):
-        """
-        Build resource xml node
-        :param resource_info:
-        :type resource_info: cloudshell.layer_one.core.response.entities.base.ResourceInfo
+        """Build resource xml node.
+
+        :type resource_info: cloudshell.layer_one.core.response.resource_info.entities.base.ResourceInfo  # noqa: E501
         :return: Resource node
         :rtype: xml.etree.ElementTree.Element
         """
@@ -43,10 +47,9 @@ class ResourceInfoBuilder(object):
 
     @staticmethod
     def _build_attribute_node(attribute):
-        """
-        Build attribute node
-        :param attribute: 
-        :type attribute: cloudshell.layer_one.core.response.entities.base.Attribute
+        """Build attribute node.
+
+        :type attribute: cloudshell.layer_one.core.response.resource_info.entities.base.Attribute  # noqa: E501
         :return: Attribute node
         :rtype: xml.etree.ElementTree.Element
         """
@@ -58,10 +61,9 @@ class ResourceInfoBuilder(object):
 
     @staticmethod
     def _build_mapping_node(mapping_node):
-        """
-        Build mapping node
-        :param mapping_node: 
-        :type mapping_node: cloudshell.layer_one.core.response.entities.base.ResourceInfo
+        """Build mapping node.
+
+        :type mapping_node: cloudshell.layer_one.core.response.resource_info.entities.base.ResourceInfo  # noqa: E501
         :return: Mapping node
         :rtype: xml.etree.ElementTree.Element
         """
@@ -72,28 +74,26 @@ class ResourceInfoBuilder(object):
 
     @staticmethod
     def _build_resource_child_nodes(node, resource):
-        """
-        Build resource nodes for children recursively
-        :param resource:
-        :type resource: cloudshell.layer_one.core.response.entities.base.ResourceInfo
-        :param node: 
+        """Build resource nodes for children recursively.
+
+        :type resource: cloudshell.layer_one.core.response.resource_info.entities.base.ResourceInfo  # noqa: E501
         :type node: xml.etree.ElementTree.Element
         """
         if len(resource.child_resources) > 0:
-            child_resources_node = node.find('ChildResources')
+            child_resources_node = node.find("ChildResources")
             for child_resource in resource.child_resources.values():
                 child_node = ResourceInfoBuilder._build_resource_node(child_resource)
                 child_resources_node.append(child_node)
-                ResourceInfoBuilder._build_resource_child_nodes(child_node, child_resource)
+                ResourceInfoBuilder._build_resource_child_nodes(
+                    child_node, child_resource
+                )
 
     @staticmethod
     def build_resource_info_nodes(base_resource):
-        """
-        Build tree of xml nodes for resource tree
-        :param base_resource:
-        :type base_resource: cloudshell.layer_one.core.response.entities.base.ResourceInfo
-        :return:
-        :type: xml.etree.ElementTree.Element
+        """Build tree of xml nodes for resource tree.
+
+        :type base_resource: cloudshell.layer_one.core.response.resource_info.entities.base.ResourceInfo  # noqa: E501
+        :rtype: xml.etree.ElementTree.Element
         """
         resource_node = ResourceInfoBuilder._build_resource_node(base_resource)
         ResourceInfoBuilder._build_resource_child_nodes(resource_node, base_resource)
