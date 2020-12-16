@@ -3,7 +3,6 @@
 
 
 class LayerOneDriverException(Exception):
-    """
-    Basic L1 exception
-    """
+    """Basic L1 exception."""
+
     pass

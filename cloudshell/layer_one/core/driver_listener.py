@@ -13,12 +13,11 @@ from cloudshell.layer_one.core.helper.runtime_configuration import RuntimeConfig
 
 
 class DriverListener(object):
-    """
-    Listen for new connection
-    """
+    """Listen for new connection."""
+
     __metaclass__ = ABCMeta
     BACKLOG = 10
-    SERVER_HOST = '0.0.0.0'
+    SERVER_HOST = "0.0.0.0"
     SERVER_PORT = 1024
     SOCKET_TIMEOUT = 900
 
@@ -28,16 +27,13 @@ class DriverListener(object):
         self._xml_logger = xml_logger
         self._is_running = False
 
-        self._debug_mode = RuntimeConfiguration().read_key('DEBUG_ENABLED', False)
+        self._debug_mode = RuntimeConfiguration().read_key("DEBUG_ENABLED", False)
 
     def _initialize_socket(self, host, port):
-        """
-        Initialize socket, and start listening
-        :return: 
-        """
+        """Initialize socket, and start listening."""
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self._command_logger.debug('New socket created')
+        self._command_logger.debug("New socket created")
         try:
             server_socket.bind((host, int(port)))
             server_socket.settimeout(self.SOCKET_TIMEOUT)
@@ -58,35 +54,49 @@ class DriverListener(object):
 
         while not sys.gettrace():
             self._command_logger.info(
-                "Waiting for a debugger to attach to this python driver process. (PID #{})".format(pid))
+                "Waiting for a debugger to attach to this python driver process. "
+                "(PID #{})".format(pid)
+            )
             time.sleep(2)
 
         self._command_logger.info("Debugger attached. (PID #{})".format(pid))
 
     def start_listening(self, host=None, port=None):
-        """Initialize socket and start listening"""
+        """Initialize socket and start listening."""
         host = host if host else self.SERVER_HOST
         port = port if port else self.SERVER_PORT
-        print "Listen address {0}:{1}".format(host, port)
+        print("Listen address {0}:{1}".format(host, port))  # noqa: T001
         server_socket = self._initialize_socket(host, port)
         while self._is_running:
             try:
                 connection, connection_data = server_socket.accept()
             except socket.timeout:
-                map(lambda th: isinstance(th, ConnectionHandler) and th.join(), threading.enumerate())
+                map(
+                    lambda th: isinstance(th, ConnectionHandler) and th.join(),
+                    threading.enumerate(),
+                )
                 self._command_logger.debug("Terminating by idle timeout")
                 break
-            self._command_logger.debug("New connection from {0}:{1}".format(connection_data[0], connection_data[1]))
+            self._command_logger.debug(
+                "New connection from {0}:{1}".format(
+                    connection_data[0], connection_data[1]
+                )
+            )
             if connection is not None:
-                request_handler = ConnectionHandler(connection, self._command_executor, self._xml_logger,
-                                                    self._command_logger)
+                request_handler = ConnectionHandler(
+                    connection,
+                    self._command_executor,
+                    self._xml_logger,
+                    self._command_logger,
+                )
                 if self._debug_mode:
                     self._wait_for_debugger_attach()
                     try:
                         request_handler.run()
-                    except:
-                        self._command_logger.debug('ConnectionHandler Error')
+                    except Exception:
+                        self._command_logger.debug("ConnectionHandler Error")
                 else:
                     request_handler.start()
-                    self._command_logger.debug("Threads count: {}".format(threading.activeCount()))
-
+                    self._command_logger.debug(
+                        "Threads count: {}".format(threading.activeCount())
+                    )
