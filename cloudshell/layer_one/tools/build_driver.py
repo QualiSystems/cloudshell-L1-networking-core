@@ -18,6 +18,7 @@ DEFAULT_FILES = [
     "version.txt",
     "INSTALL.txt",
 ]
+DEFAULT_PACKAGES = ('pip', 'wheel', 'setuptools')
 
 
 def zip_driver(driver_path, driver_zip_file, files):
@@ -45,6 +46,8 @@ def _append_files(path, zip_file):
 
 def download_packages(packages_path, requirements):
     subprocess.call(["pip", "download", "-r", requirements, "-d", packages_path, "-q"])
+    for lib_name in DEFAULT_PACKAGES:
+        subprocess.call(["pip", "download", lib_name, "-d", packages_path, "-q"])
 
 
 def _print_help():
