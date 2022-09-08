@@ -65,13 +65,13 @@ class DriverListener(object):
         """Initialize socket and start listening."""
         host = host if host else self.SERVER_HOST
         port = port if port else self.SERVER_PORT
-        print("Listen address {0}:{1}".format(host, port))  # noqa: T001
+        print("Listen address {0}:{1}".format(host, port))  # noqa: T201
         server_socket = self._initialize_socket(host, port)
         while self._is_running:
             try:
                 connection, connection_data = server_socket.accept()
             except socket.timeout:
-                map(
+                map(  # noqa: C417
                     lambda th: isinstance(th, ConnectionHandler) and th.join(),
                     threading.enumerate(),
                 )

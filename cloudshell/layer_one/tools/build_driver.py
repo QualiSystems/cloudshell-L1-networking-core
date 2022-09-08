@@ -18,7 +18,7 @@ DEFAULT_FILES = [
     "version.txt",
     "INSTALL.txt",
 ]
-DEFAULT_PACKAGES = ('pip', 'wheel', 'setuptools')
+DEFAULT_PACKAGES = ("pip", "wheel", "setuptools")
 
 
 def zip_driver(driver_path, driver_zip_file, files):
@@ -57,7 +57,7 @@ Options:
     -h, --help  Show this message and exit.
     -i, --ignore-packages  Do not collect driver dependencies
     """
-    print(message)  # noqa: T001
+    print(message)  # noqa: T201
 
 
 def build(args=None):
@@ -84,14 +84,14 @@ def build(args=None):
     if os.path.exists(os.path.join(driver_path, driver_name)):
         file_list.append(driver_name)
     else:
-        print("Cannot find driver src folder {}".format(driver_name))  # noqa: T001
+        print("Cannot find driver src folder {}".format(driver_name))  # noqa: T201
         sys.exit(1)
 
     runtime_config = driver_name + "_runtime_config.yml"
     if os.path.exists(os.path.join(driver_path, runtime_config)):
         file_list.append(runtime_config)
     else:
-        print(  # noqa: T001
+        print(  # noqa: T201
             "Cannot find driver runtime config {}".format(runtime_config)
         )
         sys.exit(1)
