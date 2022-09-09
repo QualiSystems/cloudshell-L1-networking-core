@@ -15,6 +15,8 @@ setup(
     name="cloudshell-l1-networking-core",
     version=get_file_content("version.txt"),
     description="QualiSystems CloudShell L1 networking core package",
+    long_description="QualiSystems CloudShell L1 networking core package",
+    long_description_content_type="text/x-rst",
     author="QualiSystems",
     author_email="info@qualisystems.com",
     url="https://github.com/QualiSystems/cloudshell-l1-networking-core",
@@ -38,4 +40,5 @@ setup(
     ],
     test_suite="tests",
     tests_require=get_file_content("test_requirements.txt"),
+    python_requires="~=2.7",
 )
