@@ -84,19 +84,17 @@ def build(args=None):
     if os.path.exists(os.path.join(driver_path, driver_name)):
         file_list.append(driver_name)
     else:
-        print("Cannot find driver src folder {}".format(driver_name))  # noqa: T201
+        print(f"Cannot find driver src folder {driver_name}")  # noqa: T201
         sys.exit(1)
 
-    runtime_config = driver_name + "_runtime_config.yml"
+    runtime_config = f"{driver_name}_runtime_config.yml"
     if os.path.exists(os.path.join(driver_path, runtime_config)):
         file_list.append(runtime_config)
     else:
-        print(  # noqa: T201
-            "Cannot find driver runtime config {}".format(runtime_config)
-        )
+        print("Cannot find driver runtime config {runtime_config}")  # noqa: T201
         sys.exit(1)
 
-    driver_folder_name_ver = "{}-{}".format(driver_folder_name, version)
+    driver_folder_name_ver = f"{driver_folder_name}-{version}"
     dist_path = os.path.join(driver_path, "dist")
     driver_zip_path = os.path.join(dist_path, driver_folder_name_ver + ".zip")
 

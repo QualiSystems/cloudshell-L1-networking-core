@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import re
 
 from cloudshell.layer_one.core.response.resource_info.entities.attributes import (
@@ -25,7 +23,7 @@ class Port(ResourceInfo):
         name = self.NAME_TEMPLATE.format(
             EntityValidator.validate_id_for_name_template(resource_id)
         )
-        super(Port, self).__init__(
+        super().__init__(
             resource_id, name, self.FAMILY_NAME, model_name, serial_number, mapping
         )
 

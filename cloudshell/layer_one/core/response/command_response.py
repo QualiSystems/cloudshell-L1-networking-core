@@ -1,16 +1,11 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 from datetime import datetime
 
+from cloudshell.layer_one.core.request.command_request import CommandRequest
 
-class CommandResponse(object):
-    def __init__(self, command_request):
-        """Command response.
 
-        :param command_request:
-        :type command_request: cloudshell.layer_one.core.request.command_request.CommandRequest  # noqa: E501
-        """
+class CommandResponse:
+    def __init__(self, command_request: CommandRequest):
+        """Command response."""
         self.command_request = command_request
 
         # Response attributes
@@ -21,10 +16,10 @@ class CommandResponse(object):
         self.response_info = None
 
     def __str__(self):
-        return "Command: {0}, {1}, {2}".format(
-            self.command_request.command_name,
-            self.command_request.command_id,
-            self.command_request.command_params,
+        return (
+            f"Command: {self.command_request.command_name}, "
+            f"{self.command_request.command_id}, "
+            f"{self.command_request.command_params}"
         )
 
     def __repr__(self):

@@ -5,9 +5,7 @@ class StringAttribute(Attribute):
     """String attribute."""
 
     def __init__(self, name, value):
-        super(StringAttribute, self).__init__(
-            name, Attribute.STRING, value or self.DEFAULT_VALUE
-        )
+        super().__init__(name, Attribute.STRING, value or self.DEFAULT_VALUE)
 
 
 class NumericAttribute(Attribute):
@@ -18,7 +16,7 @@ class NumericAttribute(Attribute):
     def __init__(self, name, value):
         if value is None:
             value = self.DEFAULT_VALUE
-        super(NumericAttribute, self).__init__(name, Attribute.NUMERIC, str(value))
+        super().__init__(name, Attribute.NUMERIC, str(value))
 
 
 class BooleanAttribute(Attribute):
@@ -29,6 +27,4 @@ class BooleanAttribute(Attribute):
     DEFAULT_VALUE = TRUE
 
     def __init__(self, name, value):
-        super(BooleanAttribute, self).__init__(
-            name, Attribute.BOOLEAN, value or self.DEFAULT_VALUE
-        )
+        super().__init__(name, Attribute.BOOLEAN, value or self.DEFAULT_VALUE)

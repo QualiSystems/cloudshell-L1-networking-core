@@ -1,7 +1,7 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
+from collections.abc import Collection
 from xml.etree.ElementTree import Element
 
 from cloudshell.layer_one.core.response.resource_info.resource_info_builder import (
@@ -9,10 +9,8 @@ from cloudshell.layer_one.core.response.resource_info.resource_info_builder impo
 )
 
 
-class ResponseInfo(object):
+class ResponseInfo(ABC):
     """Basic response builder."""
-
-    __metaclass__ = ABCMeta
 
     @abstractmethod
     def build_xml_node(self):
@@ -28,7 +26,7 @@ class ResourceDescriptionResponseInfo(ResponseInfo):
     """Resource description builder."""
 
     def __init__(self, resource_info):
-        if isinstance(resource_info, list):
+        if isinstance(resource_info, Collection):
             self.resource_info_list = resource_info
         else:
             self.resource_info_list = [resource_info]
@@ -48,19 +46,15 @@ class ResourceDescriptionResponseInfo(ResponseInfo):
 
 
 class KeyValueResponseInfo(ResponseInfo):
-    """Simple key value builde, used for Get/Set attribute."""
+    """Simple key value builder, used for Get/Set attribute."""
 
-    def __init__(self, attributes_dict):
-        """Initialize class.
-
-        :param attributes_dict:
-        :type attributes_dict: dict
-        """
+    def __init__(self, attributes_dict: dict):
+        """Initialize class."""
         self.attributes_dict = attributes_dict
 
     def build_xml_node(self):
         response_info_node = self._build_response_info_node()
-        for name, value in self.attributes_dict.iteritems():
+        for name, value in self.attributes_dict.items():
             attribute_node = Element(name)
             attribute_node.text = value
             response_info_node.append(attribute_node)
