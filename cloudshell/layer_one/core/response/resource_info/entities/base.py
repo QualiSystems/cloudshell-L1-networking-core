@@ -1,8 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-
-class ResourceInfo(object):
+class ResourceInfo:
     """Basic resource info entity."""
 
     def __init__(
@@ -31,38 +27,30 @@ class ResourceInfo(object):
 
     @property
     def address(self):
-        """Resource address.
-
-        :return:
-        """
+        """Resource address."""
         if self._parent_resource and self._parent_resource.address:
-            address = "{0}/{1}".format(self._parent_resource.address, self.resource_id)
+            address = f"{self._parent_resource.address}/{self.resource_id}"
         else:
             address = self.resource_id
         return address
 
     def __str__(self):
-        return "{0}, {1}".format(self.name, self.address)
+        return f"{self.name}, {self.address}"
 
     def __repr__(self):
         return self.__str__()
 
     def add_mapping(self, resource_info):
-        """Resource mapping, used for port resources.
-
-        :param resource_info:
-        :return:
-        """
+        """Resource mapping, used for port resources."""
         self.mapping = resource_info
 
 
-class Attribute(object):
+class Attribute:
     """Basic attribute entity."""
 
     NUMERIC = "Numeric"
     STRING = "String"
     BOOLEAN = "Boolean"
-
     DEFAULT_VALUE = "NA"
 
     def __init__(self, name, attr_type, value):
@@ -71,7 +59,7 @@ class Attribute(object):
         self.value = value
 
     def __str__(self):
-        return "{0}: {1}".format(self.name, self.value)
+        return f"{self.name}: {self.value}"
 
     def __repr__(self):
         return self.__str__()

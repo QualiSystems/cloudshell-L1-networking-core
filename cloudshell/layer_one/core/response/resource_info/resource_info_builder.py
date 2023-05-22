@@ -1,16 +1,18 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import os
+from xml.etree.ElementTree import Element
 
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
+from cloudshell.layer_one.core.response.resource_info.entities.base import (
+    Attribute,
+    ResourceInfo,
+)
 
 
-def full_path(relative_path):
+def full_path(relative_path: str) -> str:
     return os.path.join(os.path.dirname(__file__), relative_path)
 
 
-class ResourceInfoBuilder(object):
+class ResourceInfoBuilder:
     """Build resource info node."""
 
     RESOURCE_TEMPLATE = XMLHelper.read_template(
@@ -24,13 +26,8 @@ class ResourceInfoBuilder(object):
     )
 
     @staticmethod
-    def _build_resource_node(resource_info):
-        """Build resource xml node.
-
-        :type resource_info: cloudshell.layer_one.core.response.resource_info.entities.base.ResourceInfo  # noqa: E501
-        :return: Resource node
-        :rtype: xml.etree.ElementTree.Element
-        """
+    def _build_resource_node(resource_info: ResourceInfo) -> Element:
+        """Build resource xml node."""
         node = XMLHelper.build_node_from_string(ResourceInfoBuilder.RESOURCE_TEMPLATE)
         node.set("Name", resource_info.name)
         node.set("ResourceFamilyName", resource_info.family_name)
@@ -46,7 +43,7 @@ class ResourceInfoBuilder(object):
         return node
 
     @staticmethod
-    def _build_attribute_node(attribute):
+    def _build_attribute_node(attribute: Attribute) -> Element:
         """Build attribute node.
 
         :type attribute: cloudshell.layer_one.core.response.resource_info.entities.base.Attribute  # noqa: E501
@@ -60,25 +57,16 @@ class ResourceInfoBuilder(object):
         return node
 
     @staticmethod
-    def _build_mapping_node(mapping_node):
-        """Build mapping node.
-
-        :type mapping_node: cloudshell.layer_one.core.response.resource_info.entities.base.ResourceInfo  # noqa: E501
-        :return: Mapping node
-        :rtype: xml.etree.ElementTree.Element
-        """
+    def _build_mapping_node(mapping_node: ResourceInfo) -> Element:
+        """Build mapping node."""
         node = XMLHelper.build_node_from_string(ResourceInfoBuilder.MAPPING_TEMPLATE)
         child_incoming_node = node.find("IncomingMapping")
         child_incoming_node.text = mapping_node.address
         return node
 
     @staticmethod
-    def _build_resource_child_nodes(node, resource):
-        """Build resource nodes for children recursively.
-
-        :type resource: cloudshell.layer_one.core.response.resource_info.entities.base.ResourceInfo  # noqa: E501
-        :type node: xml.etree.ElementTree.Element
-        """
+    def _build_resource_child_nodes(node: Element, resource: ResourceInfo):
+        """Build resource nodes for children recursively."""
         if len(resource.child_resources) > 0:
             child_resources_node = node.find("ChildResources")
             for child_resource in resource.child_resources.values():
@@ -89,12 +77,8 @@ class ResourceInfoBuilder(object):
                 )
 
     @staticmethod
-    def build_resource_info_nodes(base_resource):
-        """Build tree of xml nodes for resource tree.
-
-        :type base_resource: cloudshell.layer_one.core.response.resource_info.entities.base.ResourceInfo  # noqa: E501
-        :rtype: xml.etree.ElementTree.Element
-        """
+    def build_resource_info_nodes(base_resource: ResourceInfo) -> Element:
+        """Build tree of xml nodes for resource tree."""
         resource_node = ResourceInfoBuilder._build_resource_node(base_resource)
         ResourceInfoBuilder._build_resource_child_nodes(resource_node, base_resource)
         return resource_node

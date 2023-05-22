@@ -1,21 +1,21 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
 from xml.etree import ElementTree
 
 from cloudshell.layer_one.core.helper.xml_helper import XMLHelper
+from cloudshell.layer_one.core.response.command_response import CommandResponse
 
 ElementTree.register_namespace(
     "", "http://schemas.qualisystems.com/ResourceManagement/DriverCommandResult.xsd"
 )
 
 
-def full_path(relative_path):
+def full_path(relative_path: str) -> str:
     return os.path.join(os.path.dirname(__file__), relative_path)
 
 
-class CommandResponsesBuilder(object):
+class CommandResponsesBuilder:
     RESPONSES_TEMPLATE = XMLHelper.read_template(
         full_path("templates/responses_template.xml")
     )
@@ -25,14 +25,10 @@ class CommandResponsesBuilder(object):
     ERROR_RESPONSE = XMLHelper.read_template(full_path("templates/error_response.xml"))
 
     @staticmethod
-    def _build_command_response_node(command_response):
-        """Build command response node.
-
-        :param command_response:
-        :type command_response: cloudshell.layer_one.core.response.command_response.CommandResponse  # noqa: E501
-        :return:
-        :rtype: ElementTree.Element
-        """
+    def _build_command_response_node(
+        command_response: CommandResponse,
+    ) -> ElementTree.Element:
+        """Build command response node."""
         command_response_node = XMLHelper.build_node_from_string(
             CommandResponsesBuilder.COMMAND_RESPONSE_TEMPLATE
         )
@@ -62,14 +58,8 @@ class CommandResponsesBuilder(object):
         return command_response_node
 
     @staticmethod
-    def build_xml_result(responses):
-        """Build responses for list of responses objects.
-
-        :param responses:
-        :type responses: list
-        :return:
-        :rtype: xml.etree.ElementTree.Element
-        """
+    def build_xml_result(responses: list[CommandResponse]) -> ElementTree.Element:
+        """Build responses for list of responses objects."""
         responses_node = XMLHelper.build_node_from_string(
             CommandResponsesBuilder.RESPONSES_TEMPLATE
         )
@@ -81,30 +71,20 @@ class CommandResponsesBuilder(object):
         return tree.getroot()
 
     @staticmethod
-    def to_string(root):
-        """Generate string for xml node.
-
-        :param root:
-        :return:
-        :rtype str
-        """
-        return ElementTree.tostring(root, encoding="UTF-8", method="xml").replace(
+    def to_string(root: ElementTree.Element) -> str:
+        """Generate string for xml node."""
+        return ElementTree.tostring(root, encoding="unicode", method="xml").replace(
             "\n", "\r\n"
         )
 
     @staticmethod
     def build_xml_error(error_code, log_message):
-        """Build error response.
-
-        :param error_code:
-        :param log_message:
-        :return:
-        """
+        """Build error response."""
         command_response_node = XMLHelper.build_node_from_string(
             CommandResponsesBuilder.ERROR_RESPONSE
         )
         tree = ElementTree.ElementTree(command_response_node)
         namespace = XMLHelper.get_node_namespace(command_response_node)
-        command_response_node.find(namespace + "ErrorCode").text = str(error_code)
-        command_response_node.find(namespace + "Log").text = str(log_message)
+        command_response_node.find(f"{namespace}ErrorCode").text = str(error_code)
+        command_response_node.find(f"{namespace}Log").text = str(log_message)
         return tree.getroot()

@@ -1,12 +1,7 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 
-class DriverCommandsInterface(object):
-    __metaclass__ = ABCMeta
-
+class DriverCommandsInterface(ABC):
     @abstractmethod
     def login(self, address, username, password):
         """Driver command Login.

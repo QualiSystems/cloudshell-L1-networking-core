@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 from cloudshell.layer_one.core.response.resource_info.entities.attributes import (
     StringAttribute,
 )
@@ -21,9 +19,7 @@ class Chassis(ResourceInfo):
             EntityValidator.validate_id_for_name_template(resource_id)
         )
         family_name = self.FAMILY_NAME
-        super(Chassis, self).__init__(
-            resource_id, name, family_name, model_name, serial_number
-        )
+        super().__init__(resource_id, name, family_name, model_name, serial_number)
 
     @property
     def address(self):

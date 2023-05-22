@@ -1,12 +1,19 @@
+from __future__ import annotations
+
+import logging
 import re
 import socket
 import traceback
 from threading import Thread
 
+from cloudshell.layer_one.core.command_executor import CommandExecutor
+from cloudshell.layer_one.core.helper.logger import get_l1_logger
 from cloudshell.layer_one.core.request.requests_parser import RequestsParser
 from cloudshell.layer_one.core.response.command_responses_builder import (
     CommandResponsesBuilder,
 )
+
+logger = get_l1_logger(name=__name__)
 
 
 class ConnectionClosedException(Exception):
@@ -16,27 +23,21 @@ class ConnectionClosedException(Exception):
 class ConnectionHandler(Thread):
     """Handle connections."""
 
-    REQUEST_END = r"</Commands>"
+    REQUEST_END = rb"</Commands>"
     END_COMMAND = "\r\n"
     READ_TIMEOUT = 30
 
     def __init__(
-        self, connection_socket, command_executor, xml_logger, logger, buffer_size=2048
+        self,
+        connection_socket: socket.socket,
+        command_executor: CommandExecutor,
+        xml_logger: logging.Logger,
+        buffer_size: int = 2048,
     ):
-        """Initialize class.
-
-        :param connection_socket:
-        :type connection_socket: socket.socket
-        :param command_executor:
-        :type command_executor: cloudshell.layer_one.core.command_executor.CommandExecutor  # noqa: E501
-        :param xml_logger:
-        :param logger:
-        :param buffer_size:
-        """
-        super(ConnectionHandler, self).__init__()
+        """Initialize class."""
+        super().__init__()
         self._connection_socket = connection_socket
         self._xml_logger = xml_logger
-        self._logger = logger
         self._command_executor = command_executor
         self._buffer_size = buffer_size
 
@@ -53,30 +54,27 @@ class ConnectionHandler(Thread):
                 )
             except ConnectionClosedException:
                 self._connection_socket.close()
-                self._logger.debug("Connection closed by remote host")
+                logger.debug("Connection closed by remote host")
                 break
             except socket.timeout:
                 self._connection_socket.close()
-                self._logger.debug("Connection closed by timeout")
+                logger.debug("Connection closed by timeout")
                 break
             except Exception as ex:
                 self._send_response(
                     CommandResponsesBuilder.to_string(
-                        CommandResponsesBuilder.build_xml_error(0, ex.message)
+                        CommandResponsesBuilder.build_xml_error(0, str(ex))
                     )
                 )
                 tb = traceback.format_exc()
-                self._logger.critical(tb)
+                logger.error(tb, exc_info=True)
                 self._connection_socket.close()
                 break
 
-    def _read_socket(self):
-        """Read data from socket.
-
-        :return:
-        """
+    def _read_socket(self) -> str:
+        """Read data from socket."""
         self._connection_socket.settimeout(self.READ_TIMEOUT)
-        data = ""
+        data = b""
         while True:
             input_buffer = self._connection_socket.recv(self._buffer_size)
             if not input_buffer:
@@ -88,23 +86,18 @@ class ConnectionHandler(Thread):
                 if re.search(self.REQUEST_END, data):
                     break
 
-        return data
+        return data.decode()
 
-    def _read_request_commands(self):
+    def _read_request_commands(self) -> list:
         """Read data and create requests."""
         request_string = self._read_socket()
         self._xml_logger.info(request_string.replace("\r", "") + "\n\n")
         requests = RequestsParser.parse_request_commands(request_string)
-        self._logger.debug(requests)
+        logger.debug(requests)
         return requests
 
-    def _send_response(self, response_string):
-        """Send response.
-
-        :param response_string:
-        :return:
-        """
-        self._connection_socket.send(
-            response_string + self.END_COMMAND + self.END_COMMAND
-        )
+    def _send_response(self, response_string: str):
+        """Send response."""
+        data = response_string + self.END_COMMAND + self.END_COMMAND
+        self._connection_socket.send(data.encode())
         self._xml_logger.info(response_string)
